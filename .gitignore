@@ -1,0 +1,8 @@
+.idea/
+__pycache__
+configs/log.ini
+var/
+dist/
+*.egg-info/
+build/
+*.pyc
