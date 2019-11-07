@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from happy_utils import gen_md5_32_hexdigest
-from happy_utils import gen_sha1_hexdigest
-from happy_utils import gen_sha512_hexdigest
+from happy_python import gen_md5_32_hexdigest
+from happy_python import gen_sha1_hexdigest
+from happy_python import gen_sha512_hexdigest
 
 
 class TestUtils(unittest.TestCase):

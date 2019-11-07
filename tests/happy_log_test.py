@@ -7,7 +7,7 @@ import os
 import unittest
 from pathlib import PurePath
 
-from happy_utils import HappyLog
+from happy_python import HappyLog
 
 
 class TestHappyLog(unittest.TestCase):

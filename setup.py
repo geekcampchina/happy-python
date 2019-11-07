@@ -9,9 +9,9 @@
 
 from setuptools import setup
 from os.path import join, dirname
-from happy_utils.version import __version__
+from happy_python.version import __version__
 
-with open(join(dirname(__file__), 'happy_utils/version.py'), 'r', encoding='utf-8') as f:
+with open(join(dirname(__file__), 'happy_python/version.py'), 'r', encoding='utf-8') as f:
     exec(f.read())
 
 with open(join(dirname(__file__), 'requirements.txt'), 'r', encoding='utf-8') as f:
@@ -29,7 +29,7 @@ setup(
     description="一个简单易用的 Python 库，让写代码成为一件轻松、愉快的事情。",
     long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type="text/markdown",
-    packages=['happy_utils'],
+    packages=['happy_python'],
     zip_safe=False,
     include_package_data=True,
     platforms='any',

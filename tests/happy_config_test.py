@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from happy_utils import HappyConfigBase
-from happy_utils import HappyConfigParser
+from happy_python import HappyConfigBase
+from happy_python import HappyConfigParser
 
 
 class FooConfig(HappyConfigBase):

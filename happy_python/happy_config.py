@@ -7,7 +7,7 @@
 
 import os
 from abc import ABCMeta
-from happy_utils import HappyPyException
+from happy_python import HappyPyException
 
 
 class HappyConfigBase(object, metaclass=ABCMeta):

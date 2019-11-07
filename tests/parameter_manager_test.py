@@ -1,6 +1,6 @@
 import unittest
 
-from happy_utils import ParameterManager
+from happy_python import ParameterManager
 
 ARG_FLAG_USER_NAME = 1 << 0
 ARG_FLAG_USER_ID = 2 << 0
