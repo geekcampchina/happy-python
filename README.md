@@ -17,24 +17,24 @@ Happy-Python 是一个简单易用的 Python 库，让写代码成为一件轻�
 
 ### 使用
 
-    from happy_utils import HappyLog
+    from happy_python import HappyLog
 
-## 打包发布
+## 本地打包安装
 
 ### 打包
 
 安装依赖包 `pip install -U setuptools wheel`。
 
-运行 `python setup.py bdist_wheel`，在 `dist` 目录下会生成类似 `Happy_Python-0.0.1-py3-none-any.whl` 的安装包。
+运行 `python setup.py bdist_wheel`，在 `dist` 目录下会生成类似 `Happy_Python-0.0.4-py3-none-any.whl` 的安装包。
 
 
-### 安装
+### 本地安装
 
 全局环境::
-    `pip install -U Happy_Python-0.0.1-py3-none-any.whl`
+    `pip install -U Happy_Python-0.0.4-py3-none-any.whl`
 
 用户环境::
-    `pip install --user -U Happy_Python-0.0.1-py3-none-any.whl`
+    `pip install --user -U Happy_Python-0.0.4-py3-none-any.whl`
 
 ### 卸载
 
