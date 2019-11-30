@@ -4,7 +4,6 @@
 import logging
 import logging.config
 import os
-from pathlib import PurePath
 
 _HappyLogSingletonObj = None
 _HappyLogSingletonDefaultObj = None
@@ -69,17 +68,15 @@ class HappyLog(object):
         载入默认日志配置
         :return:
         """
-        import tempfile
+        import sys
 
         self.logger = logging.getLogger()
-
-        tmp_log_file = PurePath(tempfile.gettempdir()) / 'happy_python.log'
-        self.default_file_handler = logging.FileHandler(str(tmp_log_file))
+        self.default_file_handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter('%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')
         self.default_file_handler.setFormatter(formatter)
         self.logger.addHandler(self.default_file_handler)
 
-        self.logger.warning('日志配置文件 \'%s\' 不存在，加载默认日志参数。' % self.log_ini)
+        self.logger.info('未启用日志配置文件，加载默认设置。')
 
     def load_config(self):
         if os.path.exists(self.log_ini):

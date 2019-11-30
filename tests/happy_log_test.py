@@ -3,9 +3,7 @@
 
 import inspect
 import logging
-import os
 import unittest
-from pathlib import PurePath
 
 from happy_python import HappyLog
 
@@ -15,8 +13,7 @@ class TestHappyLog(unittest.TestCase):
     logger = None
 
     def setUp(self):
-        log_ini = PurePath(os.path.dirname(__file__)).parent / 'configs' / 'log.ini'
-        self.hlog = HappyLog.get_instance(log_ini)
+        self.hlog = HappyLog.get_instance()
         self.logger = self.hlog.get_logger()
 
     def tearDown(self):
