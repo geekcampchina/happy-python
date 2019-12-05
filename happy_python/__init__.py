@@ -12,6 +12,9 @@ from happy_python.digest import gen_sha512_hexdigest
 from happy_python.datetime import get_current_datetime
 from happy_python.datetime import get_current_datetime2
 from happy_python.datetime import get_current_timestamp
+from happy_python.cmd import get_exit_status_of_cmd
+from happy_python.cmd import get_output_of_cmd
+from happy_python.cmd import non_blocking_exe_cmd
 
 
 __all__ = [
@@ -26,4 +29,7 @@ __all__ = [
     "get_current_datetime",
     "get_current_datetime2",
     "get_current_timestamp",
+    "get_exit_status_of_cmd",
+    "get_output_of_cmd",
+    "non_blocking_exe_cmd",
 ]
