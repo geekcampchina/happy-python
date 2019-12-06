@@ -7,18 +7,24 @@ import unittest
 from pathlib import PurePath
 from time import sleep
 from happy_python import get_exit_status_of_cmd
+from happy_python import get_exit_code_of_cmd
 from happy_python import get_output_of_cmd
 from happy_python import non_blocking_exe_cmd
 
 
 class TestUtils(unittest.TestCase):
     def setUp(self) -> None:
-        logging.getLogger().setLevel('DEBUG')
-
         self.test_dir = str(PurePath(tempfile.gettempdir()) / 'foo')
 
         if os.path.exists(self.test_dir):
             os.rmdir(self.test_dir)
+
+    def test_get_exit_code_of_cmd(self):
+        result = get_exit_code_of_cmd('exit 0')
+        self.assertEqual(result, 0)
+
+        result = get_exit_code_of_cmd('exit 1')
+        self.assertEqual(result, 1)
 
     def test_get_exit_status_of_cmd(self):
         result = get_exit_status_of_cmd('exit 0')

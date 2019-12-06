@@ -8,6 +8,25 @@ from happy_python import HappyLog
 hlog = HappyLog.get_instance()
 
 
+def get_exit_code_of_cmd(cmd: str) -> int:
+    """
+    执行系统命令，屏蔽标准输出，返回命令退出代码
+    :return:
+    """
+    func_name = inspect.stack()[0][3]
+    hlog.enter_func(func_name)
+
+    hlog.debug("cmd=%s" % cmd)
+
+    cp = subprocess.run(cmd, shell=True)
+    result = cp.returncode
+
+    hlog.debug("result=%d" % result)
+    hlog.exit_func(func_name)
+
+    return result
+
+
 def get_exit_status_of_cmd(cmd: str) -> bool:
     """
     执行系统命令，屏蔽标准输出，根据命令退出代码返回布尔值
@@ -18,8 +37,7 @@ def get_exit_status_of_cmd(cmd: str) -> bool:
 
     hlog.debug("cmd=%s" % cmd)
 
-    cp = subprocess.run(cmd, shell=True)
-    result = cp.returncode == 0
+    result = get_exit_code_of_cmd(cmd) == 0
 
     hlog.debug("Command %s" % ('succeeded' if result else 'failed'))
     hlog.exit_func(func_name)
