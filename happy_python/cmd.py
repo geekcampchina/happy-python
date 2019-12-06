@@ -11,6 +11,7 @@ hlog = HappyLog.get_instance()
 def get_exit_code_of_cmd(cmd: str) -> int:
     """
     执行系统命令，屏蔽标准输出，返回命令退出代码
+    :cmd: 命令行
     :return:
     """
     func_name = inspect.stack()[0][3]
@@ -30,6 +31,7 @@ def get_exit_code_of_cmd(cmd: str) -> int:
 def get_exit_status_of_cmd(cmd: str) -> bool:
     """
     执行系统命令，屏蔽标准输出，根据命令退出代码返回布尔值
+    :cmd: 命令行
     :return:
     """
     func_name = inspect.stack()[0][3]
@@ -45,9 +47,12 @@ def get_exit_status_of_cmd(cmd: str) -> bool:
     return result
 
 
-def get_output_of_cmd(cmd: str, encoding='UTF-8') -> str:
+def get_output_of_cmd(cmd: str, encoding='UTF-8', remove_white_char=False) -> str:
     """
     执行系统命令，返回命令执行结果字符串
+    :cmd: 命令行
+    :encoding: 指定返回字符串编码
+    :remove_white_char: 是否移除返回字符串最后的空白字符，比如换行符
     :return:
     """
     func_name = inspect.stack()[0][3]
@@ -58,6 +63,9 @@ def get_output_of_cmd(cmd: str, encoding='UTF-8') -> str:
     cp = subprocess.run(cmd, shell=True, capture_output=True)
     result = str(cp.stdout, encoding)
 
+    if remove_white_char:
+        result = result.strip()
+
     hlog.debug("result=%s" % result)
     hlog.exit_func(func_name)
 
@@ -67,6 +75,7 @@ def get_output_of_cmd(cmd: str, encoding='UTF-8') -> str:
 def non_blocking_exe_cmd(cmd: str) -> None:
     """
     使用非阻塞的子进程执行命令
+    :cmd: 命令行
     :return:
     """
     func_name = inspect.stack()[0][3]

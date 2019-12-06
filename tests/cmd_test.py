@@ -34,11 +34,16 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(result)
 
     def test_get_output_of_cmd(self):
-        result = get_output_of_cmd('echo foo').strip()
-        self.assertEqual(result, 'foo')
+        line_sep = os.linesep
 
-        result = get_output_of_cmd('echo bar').strip()
-        self.assertEqual(result, 'bar')
+        result = get_output_of_cmd('echo foo')
+        self.assertEqual(result, 'foo' + line_sep)
+
+        result = get_output_of_cmd('echo bar')
+        self.assertEqual(result, 'bar' + line_sep)
+
+        result = get_output_of_cmd('echo foo', remove_white_char=True)
+        self.assertEqual(result, 'foo')
 
     def test_non_blocking_exe_cmd(self):
         non_blocking_exe_cmd('mkdir ' + self.test_dir)
