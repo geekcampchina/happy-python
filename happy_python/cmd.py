@@ -28,6 +28,10 @@ def get_exit_code_of_cmd(cmd: str,
 
     hlog.debug("cmd=%s" % cmd)
 
+    if not cmd:
+        hlog.critical('"cmd" 参数必能为空')
+        return 1
+
     cp = subprocess.run(cmd, shell=True, capture_output=True, check=is_raise_exception)
     result = cp.returncode
 
