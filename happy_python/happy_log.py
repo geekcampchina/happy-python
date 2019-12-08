@@ -71,6 +71,7 @@ class HappyLog(object):
         import sys
 
         self.logger = logging.getLogger()
+        self.logger.setLevel('INFO')
         self.default_file_handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter('%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')
         self.default_file_handler.setFormatter(formatter)
