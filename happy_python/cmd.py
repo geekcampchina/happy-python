@@ -19,8 +19,11 @@ def get_exit_code_of_cmd(cmd: str) -> int:
 
     hlog.debug("cmd=%s" % cmd)
 
-    cp = subprocess.run(cmd, shell=True)
+    cp = subprocess.run(cmd, shell=True, capture_output=True)
     result = cp.returncode
+
+    if result != 0:
+        hlog.error('error code: %d, error message: %s' % (result, str(cp.stderr, encoding='UTF-8')))
 
     hlog.debug("result=%d" % result)
     hlog.exit_func(func_name)
@@ -65,6 +68,9 @@ def get_output_of_cmd(cmd: str, encoding='UTF-8', remove_white_char=False) -> st
 
     if remove_white_char:
         result = result.strip()
+
+    if result != 0:
+        hlog.error('error code: %d, error message: %s' % (cp.returncode, str(cp.stderr, encoding=encoding)))
 
     hlog.debug("result=%s" % result)
     hlog.exit_func(func_name)
