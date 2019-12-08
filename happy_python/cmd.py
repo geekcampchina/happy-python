@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 import inspect
+import os
 import subprocess
 from multiprocessing import Process
 from happy_python import HappyLog
@@ -8,12 +9,18 @@ from happy_python import HappyLog
 hlog = HappyLog.get_instance()
 
 
-def get_exit_code_of_cmd(cmd: str, is_show_error=True, is_show_output=False) -> int:
+def get_exit_code_of_cmd(cmd: str,
+                         encoding='UTF-8',
+                         is_show_error=True,
+                         is_show_output=False,
+                         is_raise_exception=False) -> int:
     """
     执行系统命令，屏蔽标准输出，返回命令退出代码
     :cmd: 命令行
+    :encoding: 指定编码
     :is_show_error: 显示错误提示信息
     :is_show_output: 打印命令输出
+    :is_raise_exception: 执行失败时，跑出异常
     :return:
     """
     func_name = inspect.stack()[0][3]
@@ -21,14 +28,16 @@ def get_exit_code_of_cmd(cmd: str, is_show_error=True, is_show_output=False) -> 
 
     hlog.debug("cmd=%s" % cmd)
 
-    cp = subprocess.run(cmd, shell=True, capture_output=True)
+    cp = subprocess.run(cmd, shell=True, capture_output=True, check=is_raise_exception)
     result = cp.returncode
 
     if result != 0 and is_show_error:
-        hlog.error('error code: %d, error message: %s' % (result, str(cp.stderr, encoding='UTF-8')))
+        hlog.error('error code: %d, error message: %s' % (result, str(cp.stderr, encoding=encoding).strip()))
 
     if is_show_output:
-        hlog.info(cp.stdout)
+        hlog.info('Command output:%s%s' % (os.linesep, str(cp.stdout, encoding=encoding).strip()))
+    elif is_show_error:
+        hlog.error('Command output:%s%s' % (os.linesep, str(cp.stdout, encoding=encoding).strip()))
 
     hlog.debug("result=%d" % result)
     hlog.exit_func(func_name)
@@ -36,12 +45,18 @@ def get_exit_code_of_cmd(cmd: str, is_show_error=True, is_show_output=False) -> 
     return result
 
 
-def get_exit_status_of_cmd(cmd: str, is_show_error=True, is_show_output=False) -> bool:
+def get_exit_status_of_cmd(cmd: str,
+                           encoding='UTF-8',
+                           is_show_error=True,
+                           is_show_output=False,
+                           is_raise_exception=False) -> bool:
     """
     执行系统命令，屏蔽标准输出，根据命令退出代码返回布尔值
     :cmd: 命令行
+    :encoding: 指定编码
     :is_show_error: 显示错误提示信息
     :is_show_output: 打印命令输出
+    :is_raise_exception: 执行失败时，跑出异常
     :return:
     """
     func_name = inspect.stack()[0][3]
@@ -49,7 +64,7 @@ def get_exit_status_of_cmd(cmd: str, is_show_error=True, is_show_output=False) -
 
     hlog.debug("cmd=%s" % cmd)
 
-    result = get_exit_code_of_cmd(cmd, is_show_error, is_show_output) == 0
+    result = get_exit_code_of_cmd(cmd, encoding, is_show_error, is_show_output, is_raise_exception) == 0
 
     hlog.debug("Command %s" % ('succeeded' if result else 'failed'))
     hlog.exit_func(func_name)
@@ -57,12 +72,13 @@ def get_exit_status_of_cmd(cmd: str, is_show_error=True, is_show_output=False) -
     return result
 
 
-def get_output_of_cmd(cmd: str, encoding='UTF-8', remove_white_char=False) -> str:
+def get_output_of_cmd(cmd: str, encoding='UTF-8', remove_white_char=False, is_raise_exception=False) -> str:
     """
     执行系统命令，返回命令执行结果字符串
     :cmd: 命令行
     :encoding: 指定返回字符串编码
     :remove_white_char: 是否移除返回字符串最后的空白字符，比如换行符
+    :is_raise_exception: 执行失败时，跑出异常
     :return:
     """
     func_name = inspect.stack()[0][3]
@@ -70,7 +86,7 @@ def get_output_of_cmd(cmd: str, encoding='UTF-8', remove_white_char=False) -> st
 
     hlog.debug("cmd=%s" % cmd)
 
-    cp = subprocess.run(cmd, shell=True, capture_output=True)
+    cp = subprocess.run(cmd, shell=True, capture_output=True, check=is_raise_exception)
     result = str(cp.stdout, encoding)
 
     if remove_white_char:
