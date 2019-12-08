@@ -8,10 +8,12 @@ from happy_python import HappyLog
 hlog = HappyLog.get_instance()
 
 
-def get_exit_code_of_cmd(cmd: str) -> int:
+def get_exit_code_of_cmd(cmd: str, is_show_error=True, is_show_output=False) -> int:
     """
     执行系统命令，屏蔽标准输出，返回命令退出代码
     :cmd: 命令行
+    :is_show_error: 显示错误提示信息
+    :is_show_output: 打印命令输出
     :return:
     """
     func_name = inspect.stack()[0][3]
@@ -22,8 +24,11 @@ def get_exit_code_of_cmd(cmd: str) -> int:
     cp = subprocess.run(cmd, shell=True, capture_output=True)
     result = cp.returncode
 
-    if result != 0:
+    if result != 0 and is_show_error:
         hlog.error('error code: %d, error message: %s' % (result, str(cp.stderr, encoding='UTF-8')))
+
+    if is_show_output:
+        hlog.info(cp.stdout)
 
     hlog.debug("result=%d" % result)
     hlog.exit_func(func_name)
@@ -31,10 +36,12 @@ def get_exit_code_of_cmd(cmd: str) -> int:
     return result
 
 
-def get_exit_status_of_cmd(cmd: str) -> bool:
+def get_exit_status_of_cmd(cmd: str, is_show_error=True, is_show_output=False) -> bool:
     """
     执行系统命令，屏蔽标准输出，根据命令退出代码返回布尔值
     :cmd: 命令行
+    :is_show_error: 显示错误提示信息
+    :is_show_output: 打印命令输出
     :return:
     """
     func_name = inspect.stack()[0][3]
@@ -42,7 +49,7 @@ def get_exit_status_of_cmd(cmd: str) -> bool:
 
     hlog.debug("cmd=%s" % cmd)
 
-    result = get_exit_code_of_cmd(cmd) == 0
+    result = get_exit_code_of_cmd(cmd, is_show_error, is_show_output) == 0
 
     hlog.debug("Command %s" % ('succeeded' if result else 'failed'))
     hlog.exit_func(func_name)
@@ -71,6 +78,7 @@ def get_output_of_cmd(cmd: str, encoding='UTF-8', remove_white_char=False) -> st
 
     if result != 0:
         hlog.error('error code: %d, error message: %s' % (cp.returncode, str(cp.stderr, encoding=encoding)))
+        hlog.error(result)
 
     hlog.debug("result=%s" % result)
     hlog.exit_func(func_name)
