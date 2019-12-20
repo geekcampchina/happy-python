@@ -96,7 +96,7 @@ def get_output_of_cmd(cmd: str, encoding='UTF-8', remove_white_char=False, is_ra
     if remove_white_char:
         result = result.strip()
 
-    if result != 0:
+    if cp.returncode != 0:
         hlog.error('error code: %d, error message: %s' % (cp.returncode, str(cp.stderr, encoding=encoding)))
         hlog.error(result)
 
