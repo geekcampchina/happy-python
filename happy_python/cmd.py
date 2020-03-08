@@ -121,3 +121,30 @@ def non_blocking_exe_cmd(cmd: str) -> None:
     child_process.start()
     # 不等待子进程返回，不需要使用 child_process.join()
     hlog.exit_func(func_name)
+
+
+def exe_cmd_and_poll_output(cmd, encoding='UTF-8'):
+    """
+    将命令输出实时打印到标准输出
+    :param cmd: 命令行
+    :param encoding: 字符编码
+    :return:
+    """
+    import shlex
+
+    func_name = inspect.stack()[0][3]
+    hlog.enter_func(func_name)
+
+    hlog.trace("cmd=%s" % cmd)
+
+    cmd = shlex.split(cmd)
+    p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    while p.poll() is None:
+        line = p.stdout.readline()
+        print(str(line, encoding=encoding), end='')
+
+    if p.returncode != 0:
+        hlog.error('Command execution failed')
+
+    hlog.exit_func(func_name)
