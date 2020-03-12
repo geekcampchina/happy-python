@@ -20,7 +20,7 @@ def get_exit_code_of_cmd(cmd: str,
     :encoding: 指定编码
     :is_show_error: 显示错误提示信息
     :is_show_output: 打印命令输出
-    :is_raise_exception: 执行失败时，跑出异常
+    :is_raise_exception: 执行失败时，抛出异常
     :return:
     """
     func_name = inspect.stack()[0][3]
@@ -29,7 +29,7 @@ def get_exit_code_of_cmd(cmd: str,
     hlog.debug("cmd=%s" % cmd)
 
     if not cmd:
-        hlog.critical('"cmd" 参数必能为空')
+        hlog.critical('"cmd" 参数不能为空')
         return 1
 
     cp = subprocess.run(cmd, shell=True, capture_output=True, check=is_raise_exception)
