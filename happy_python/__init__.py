@@ -16,6 +16,7 @@ from happy_python.cmd import get_exit_code_of_cmd
 from happy_python.cmd import get_exit_status_of_cmd
 from happy_python.cmd import get_output_of_cmd
 from happy_python.cmd import non_blocking_exe_cmd
+from happy_python.cmd import exe_cmd_and_poll_output
 
 
 __all__ = [
@@ -34,4 +35,5 @@ __all__ = [
     "get_exit_status_of_cmd",
     "get_output_of_cmd",
     "non_blocking_exe_cmd",
+    "exe_cmd_and_poll_output"
 ]
