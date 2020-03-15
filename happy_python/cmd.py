@@ -40,8 +40,6 @@ def get_exit_code_of_cmd(cmd: str,
 
     if is_show_output:
         hlog.info('Command output:%s%s' % (os.linesep, str(cp.stdout, encoding=encoding).strip()))
-    elif is_show_error:
-        hlog.error('Command output:%s%s' % (os.linesep, str(cp.stdout, encoding=encoding).strip()))
 
     hlog.debug("result=%d" % result)
     hlog.exit_func(func_name)
@@ -123,12 +121,13 @@ def non_blocking_exe_cmd(cmd: str) -> None:
     hlog.exit_func(func_name)
 
 
-def exe_cmd_and_poll_output(cmd, encoding='UTF-8'):
+def exe_cmd_and_poll_output(cmd, encoding='UTF-8', is_capture_output=False):
     """
     将命令输出实时打印到标准输出
+    :param is_capture_output:
     :param cmd: 命令行
     :param encoding: 字符编码
-    :return:
+    :return: 标准输出字符串列表
     """
     import shlex
 
@@ -137,14 +136,20 @@ def exe_cmd_and_poll_output(cmd, encoding='UTF-8'):
 
     hlog.trace("cmd=%s" % cmd)
 
+    output = list()
     cmd = shlex.split(cmd)
-    p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-    while p.poll() is None:
-        line = p.stdout.readline()
-        print(str(line, encoding=encoding), end='')
+    with subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as p:
+        while p.poll() is None:
+            line = p.stdout.readline()
+            line = str(line, encoding=encoding)
+            print(line, end='')
+
+            if is_capture_output:
+                output.append(line)
 
     if p.returncode != 0:
         hlog.error('Command execution failed')
 
     hlog.exit_func(func_name)
+    return output
