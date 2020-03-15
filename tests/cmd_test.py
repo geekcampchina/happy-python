@@ -10,6 +10,7 @@ from happy_python import get_exit_status_of_cmd
 from happy_python import get_exit_code_of_cmd
 from happy_python import get_output_of_cmd
 from happy_python import non_blocking_exe_cmd
+from happy_python import exe_cmd_and_poll_output
 
 
 class TestUtils(unittest.TestCase):
@@ -23,14 +24,14 @@ class TestUtils(unittest.TestCase):
         result = get_exit_code_of_cmd('exit 0')
         self.assertEqual(result, 0)
 
-        result = get_exit_code_of_cmd('exit 1')
+        result = get_exit_code_of_cmd('exit 1', is_show_error=False)
         self.assertEqual(result, 1)
 
     def test_get_exit_status_of_cmd(self):
         result = get_exit_status_of_cmd('exit 0')
         self.assertTrue(result)
 
-        result = get_exit_status_of_cmd('exit 1')
+        result = get_exit_status_of_cmd('exit 1', is_show_error=False)
         self.assertFalse(result)
 
     def test_get_output_of_cmd(self):
@@ -49,6 +50,11 @@ class TestUtils(unittest.TestCase):
         non_blocking_exe_cmd('mkdir ' + self.test_dir)
         sleep(1)
         self.assertTrue(os.path.exists(self.test_dir))
+
+    def test_exe_cmd_and_poll_output(self):
+        output = exe_cmd_and_poll_output('echo -n ok', is_capture_output=True)
+        sleep(1)
+        self.assertEqual(output[0], 'ok')
 
     def tearDown(self) -> None:
         if os.path.exists(self.test_dir):
