@@ -71,6 +71,9 @@ class HappyConfigParser(object):
                 elif t is float:
                     v = cfg.getfloat(section, name)
                     exec("happy_config_object.%s=%f" % (name, v))
+                elif t is list:
+                    v = cfg.get(section, name).split(',')
+                    exec("happy_config_object.%s=%s" % (name, v))
                 else:
                     v = cfg.getboolean(section, name)
                     exec("happy_config_object.%s=%s" % (name, v))

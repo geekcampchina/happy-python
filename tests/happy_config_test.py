@@ -17,6 +17,7 @@ class FooConfig(HappyConfigBase):
         self.example_name = ''
         self.example_port = 0
         self.example_enable = True
+        self.example_list = list()
 
 
 class TestHappyConfigParser(unittest.TestCase):
@@ -28,6 +29,7 @@ class TestHappyConfigParser(unittest.TestCase):
         config['foo_section']['example_name'] = 'abc'
         config['foo_section']['example_port'] = '5432'
         config['foo_section']['example_enable'] = 'True'
+        config['foo_section']['example_list'] = 'a,b,c,d'
 
         with open('example.ini', 'w') as configfile:
             config.write(configfile)
@@ -48,3 +50,4 @@ class TestHappyConfigParser(unittest.TestCase):
         self.assertEqual(foo_config.example_name, 'abc')
         self.assertEqual(foo_config.example_port, 5432)
         self.assertTrue(foo_config.example_enable)
+        self.assertEqual(foo_config.example_list, ['a', 'b', 'c', 'd'])
