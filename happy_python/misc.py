@@ -18,9 +18,6 @@ def callback_succeed_once(callback, max_time=100, is_sleep=True, interval=0.1, *
     :param kwargs:
     :return:
     """
-    func_name = inspect.stack()[0][3]
-    hlog.enter_func(func_name)
-
     n = 1
     result = None
 
@@ -39,6 +36,4 @@ def callback_succeed_once(callback, max_time=100, is_sleep=True, interval=0.1, *
 
             hlog.critical(e)
 
-    hlog.var('result', result)
-    hlog.exit_func(func_name)
     return result
