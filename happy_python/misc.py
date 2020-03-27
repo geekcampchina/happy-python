@@ -8,7 +8,7 @@ from happy_python import HappyLog
 hlog = HappyLog.get_instance()
 
 
-def callback_succeed_once(callback, max_time=100, is_sleep=True, interval=0.1, **kwargs) -> bool:
+def callback_succeed_once(callback, max_time=100, is_sleep=True, interval=0.1, **kwargs):
     """
     保证方法必须成功执行一次，如果出现异常则重试。
     :param interval: sleep间隔时间，单位秒
