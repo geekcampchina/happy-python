@@ -35,10 +35,6 @@ class HappyConfigBase(object, metaclass=ABCMeta):
 class HappyConfigParser(object):
     @staticmethod
     def load(filename: str, happy_config_object: HappyConfigBase):
-        from configparser import ConfigParser
-
-        # TODO 配置文件与HappyConfigBase定义不一致时，抛出异常
-
         if not isinstance(happy_config_object, HappyConfigBase):
             raise HappyPyException('happy_config_object 不是 HappyConfigBase 类的子类对象。')
 
@@ -47,8 +43,23 @@ class HappyConfigParser(object):
                 print("[Error] 配置文件 %s 不存在" % filename)
                 exit(1)
 
+            with open(filename, 'r') as f:
+                content = f.readlines()
+                HappyConfigParser._loads(''.join(content), happy_config_object)
+        except Exception as e:
+            print("[Error] 配置文件读取错误：%s" % str(e))
+            exit(1)
+
+    @staticmethod
+    def _loads(content: str, happy_config_object: HappyConfigBase):
+        from configparser import ConfigParser
+
+        if not isinstance(happy_config_object, HappyConfigBase):
+            raise HappyPyException('happy_config_object 不是 HappyConfigBase 类的子类对象。')
+
+        try:
             cfg = ConfigParser()
-            cfg.read(filename)
+            cfg.read_string(content)
 
             class_attrs = happy_config_object.__dict__
             section = happy_config_object.section
@@ -77,6 +88,24 @@ class HappyConfigParser(object):
                 else:
                     v = cfg.getboolean(section, name)
                     exec("happy_config_object.%s=%s" % (name, v))
+        except Exception as e:
+            print("[Error] 配置文件读取错误：%s" % str(e))
+            exit(1)
+
+    @staticmethod
+    def load_with_var(filename: str, var_dict: dict, happy_config_object: HappyConfigBase):
+        try:
+            if not os.path.exists(filename):
+                print("[Error] 配置文件 %s 不存在" % filename)
+                exit(1)
+
+            with open(filename, 'r') as f:
+                content = ''.join(f.readlines())
+
+                for var, value in var_dict.items():
+                    content = content.replace('${%s}' % var, value)
+
+                HappyConfigParser._loads(content, happy_config_object)
         except Exception as e:
             print("[Error] 配置文件读取错误：%s" % str(e))
             exit(1)
