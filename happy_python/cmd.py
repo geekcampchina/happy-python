@@ -4,6 +4,7 @@ import inspect
 import os
 import subprocess
 from multiprocessing import Process
+
 from happy_python import HappyLog
 
 hlog = HappyLog.get_instance()
@@ -115,7 +116,7 @@ def non_blocking_exe_cmd(cmd: str) -> None:
 
     hlog.trace("cmd=%s" % cmd)
 
-    child_process = Process(target=get_exit_status_of_cmd, args=(cmd, ))
+    child_process = Process(target=get_exit_status_of_cmd, args=(cmd,))
     child_process.start()
     # 不等待子进程返回，不需要使用 child_process.join()
     hlog.exit_func(func_name)

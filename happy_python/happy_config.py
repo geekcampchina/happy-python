@@ -7,6 +7,7 @@
 
 import os
 from abc import ABCMeta
+
 from happy_python import HappyPyException
 
 

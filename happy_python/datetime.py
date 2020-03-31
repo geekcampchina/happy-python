@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
 import time
+from datetime import datetime
 
 
 def get_current_datetime():

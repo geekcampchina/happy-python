@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+
 from happy_python import HappyPyException
 
 

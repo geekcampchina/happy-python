@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+
 from happy_python import HappyConfigBase
 from happy_python import HappyConfigParser
 
@@ -10,6 +11,7 @@ class FooConfig(HappyConfigBase):
     """
     配置文件模板
     """
+
     def __init__(self):
         super().__init__()
 

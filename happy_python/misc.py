@@ -1,6 +1,5 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-import inspect
 import time
 
 from happy_python import HappyLog
