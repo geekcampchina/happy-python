@@ -11,16 +11,13 @@ from setuptools import setup
 from os.path import join, dirname
 from happy_python.version import __version__
 
-with open(join(dirname(__file__), 'happy_python/version.py'), 'r', encoding='utf-8') as f:
-    exec(f.read())
-
 with open(join(dirname(__file__), 'requirements.txt'), 'r', encoding='utf-8') as f:
     pkgs = f.read()
     print('pkgs', pkgs)
     install_requires = pkgs.split("\n")
 
 setup(
-    name='Happy-Python',
+    name='happy_python',
     version=__version__,
     url='https://github.com/geekcampchina/happy-python',
     license='GPL',
