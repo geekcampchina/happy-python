@@ -10,6 +10,8 @@ from happy_python.happy_config import HappyConfigParser
 from happy_python.digest import gen_md5_32_hexdigest
 from happy_python.digest import gen_sha1_hexdigest
 from happy_python.digest import gen_sha512_hexdigest
+from happy_python.datetime import str_to_datetime
+from happy_python.datetime import datetime_to_str
 from happy_python.datetime import get_current_datetime
 from happy_python.datetime import get_current_datetime2
 from happy_python.datetime import get_current_timestamp
@@ -46,4 +48,6 @@ __all__ = [
     "bytearray_to_str",
     "str_to_dict",
     "dict_to_str",
+    "str_to_datetime",
+    "datetime_to_str",
 ]
