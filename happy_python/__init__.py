@@ -25,6 +25,7 @@ from happy_python.str_util import bytearray_to_str
 from happy_python.str_util import bytes_to_str
 from happy_python.str_util import dict_to_str
 from happy_python.str_util import str_to_dict
+from happy_python.json import dict_to_pretty_json
 
 __all__ = [
     "HappyPyException",
@@ -50,4 +51,5 @@ __all__ = [
     "dict_to_str",
     "str_to_datetime",
     "datetime_to_str",
+    "dict_to_pretty_json",
 ]
