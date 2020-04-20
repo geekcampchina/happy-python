@@ -3,7 +3,7 @@
 import json
 
 
-def dict_to_pretty_json(data: dict, indent=4, sort_keys=False, ensure_ascii=False):
+def dict_to_pretty_json(data: dict, indent=4, sort_keys=True, ensure_ascii=False):
     """
     字典转换为JSON字符串
     :param data: 字典
