@@ -21,7 +21,7 @@ from happy_python.cmd import get_output_of_cmd
 from happy_python.cmd import non_blocking_exe_cmd
 from happy_python.cmd import exe_cmd_and_poll_output
 from happy_python.misc import callback_succeed_once
-from happy_python.str_util import bytearray_to_str
+from happy_python.str_util import bytearray_to_str, gen_random_str
 from happy_python.str_util import bytes_to_str
 from happy_python.str_util import dict_to_str
 from happy_python.str_util import str_to_dict
@@ -52,4 +52,5 @@ __all__ = [
     "str_to_datetime",
     "datetime_to_str",
     "dict_to_pretty_json",
+    "gen_random_str",
 ]
