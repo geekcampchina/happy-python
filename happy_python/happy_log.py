@@ -4,12 +4,32 @@
 import logging
 import logging.config
 import os
+from enum import Enum, unique
 
 _HappyLogSingletonObj = None
 _HappyLogSingletonDefaultObj = None
 
+
+@unique
+class HappyLogLevel(Enum):
+    CRITICAL = 0
+    ERROR = 1
+    WARNING = 2
+    INFO = 3
+    DEBUG = 4
+    TRACE = 5
+
+    @staticmethod
+    def get_list():
+        """
+        返回日志等级数字列表
+        :return:
+        """
+        return [*range(HappyLogLevel.CRITICAL.value, HappyLogLevel.CRITICAL.TRACE.value + 1)]
+
+
 TRACE_LEVEL_NUM = 9
-logging.addLevelName(TRACE_LEVEL_NUM, "TRACE")
+logging.addLevelName(TRACE_LEVEL_NUM, HappyLogLevel.TRACE.name)
 
 
 def trace_log_func(self, message, *args, **kws):
@@ -28,6 +48,7 @@ class HappyLog(object):
     default_file_handler = None
 
     def __init__(self, log_ini='', logger_name=''):
+        self.log_level: HappyLogLevel = HappyLogLevel.INFO
         self.logger_name = logger_name
         self.log_ini = log_ini
 
@@ -39,7 +60,7 @@ class HappyLog(object):
         """
         单例模式
         :param log_ini:
-        :param logger_name:
+        :param logger_name
         :return:
         """
         global _HappyLogSingletonObj
@@ -50,7 +71,6 @@ class HappyLog(object):
 
         if os.path.exists(log_ini):
             _HappyLogSingletonObj = HappyLog(log_ini, logger_name)
-
             obj = _HappyLogSingletonObj
         else:
             if not _HappyLogSingletonDefaultObj:
@@ -63,6 +83,16 @@ class HappyLog(object):
     def get_logger(self):
         return self.logger
 
+    def set_level(self, log_level: int = HappyLogLevel.INFO.value):
+        """
+        :param log_level: 有效范围0~5
+        :return:
+        """
+        import sys
+
+        self.log_level = HappyLogLevel(log_level)
+        self.logger.setLevel(self.log_level.name)
+
     def load_default_config(self):
         """
         载入默认日志配置
@@ -71,13 +101,12 @@ class HappyLog(object):
         import sys
 
         self.logger = logging.getLogger()
-        self.logger.setLevel('INFO')
+        self.logger.setLevel(self.log_level.name)
         self.default_file_handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter('%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')
         self.default_file_handler.setFormatter(formatter)
         self.logger.addHandler(self.default_file_handler)
-
-        self.logger.debug('未启用日志配置文件，加载默认设置。')
+        self.logger.info('未启用日志配置文件，加载默认设置。')
 
     def load_config(self):
         if os.path.exists(self.log_ini):
