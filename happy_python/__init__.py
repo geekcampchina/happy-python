@@ -7,7 +7,8 @@ from happy_python.happy_log import HappyLog
 from happy_python.parameter_manager import ParameterManager
 from happy_python.happy_config import HappyConfigBase
 from happy_python.happy_config import HappyConfigParser
-from happy_python.digest import gen_md5_32_hexdigest
+from happy_python.digest import gen_md5_32_hexdigest, sign_sha1_digest, sign_sha224_digest, sign_sha256_digest, \
+    sign_sha384_digest, sign_sha512_digest
 from happy_python.digest import gen_sha1_hexdigest
 from happy_python.digest import gen_sha512_hexdigest
 from happy_python.datetime import str_to_datetime
@@ -53,4 +54,9 @@ __all__ = [
     "datetime_to_str",
     "dict_to_pretty_json",
     "gen_random_str",
+    "sign_sha1_digest",
+    "sign_sha224_digest",
+    "sign_sha256_digest",
+    "sign_sha384_digest",
+    "sign_sha512_digest",
 ]
