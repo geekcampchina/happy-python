@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from happy_python import bytearray_to_str, gen_random_str
+from happy_python import bytearray_to_str, gen_random_str, to_hex_str
 from happy_python import bytes_to_str
 from happy_python import dict_to_str
 from happy_python import str_to_dict
@@ -28,3 +28,6 @@ class TestUtils(unittest.TestCase):
     def test_random_str(self):
         result = gen_random_str(11)
         self.assertEqual(11, len(result))
+
+    def test_to_hex_str(self):
+        self.assertEqual(to_hex_str('abcde'), '6162636465')
