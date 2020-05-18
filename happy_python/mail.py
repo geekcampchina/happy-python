@@ -75,6 +75,7 @@ class HappyEmail:
             client.sendmail(self.sender.addr, recipients, body.as_string())
             client.quit()
 
+            hlog.info('发送邮件成功')
             return True
         except Exception as e:
             client.close()

@@ -5,4 +5,4 @@
 Happy Python 版本号
 """
 
-__version__ = '0.1'
+__version__ = '0.1.1'
