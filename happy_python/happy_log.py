@@ -106,7 +106,7 @@ class HappyLog(object):
         formatter = logging.Formatter('%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')
         self.default_file_handler.setFormatter(formatter)
         self.logger.addHandler(self.default_file_handler)
-        self.logger.info('未启用日志配置文件，加载默认设置。')
+        self.logger.debug('未启用日志配置文件，加载默认设置。')
 
     def load_config(self):
         if os.path.exists(self.log_ini):
