@@ -33,7 +33,7 @@ class HappyEmail:
     sender: EmailAddr
     subject: str
     body: str
-    use_tls: bool = True,
+    use_tls: bool = True
     enable_debug: bool = False
 
     def send_mail(self, enable_mock=False) -> bool:
