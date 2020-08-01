@@ -71,6 +71,20 @@ class Domain:
     def add_feild_top_level_domain(self, value):
         self.feild_top_level_domains.append(value)
 
+    def get_domain_name(self):
+        """
+        域名字符串，比如 foo.com，foo.com.cn
+        :return:
+        """
+        return '%s%s' % (self.feild_domain_name, ''.join(self.feild_top_level_domains))
+
+    def get_host_name(self):
+        """
+        主机字符串，比如 www，www.test
+        :return:
+        """
+        return DOMAIN_SEPARATOR.join(self.feild_hosts)
+
 
 def _is_valid_tld(s: str) -> bool:
     """
