@@ -105,7 +105,7 @@ def _is_valid_tld(s: str) -> bool:
 
 def _is_valid_host(s: str) -> bool:
     """
-    验证主机字段，主机字段由字母、数字以及中横线（“-”）组成，但不能为空或中横线（“-”），不能以中横线（“-”）开头或结尾
+    验证主机字段，主机字段由字母、数字、下划线以及中横线（“-”）组成，但不能为空或中横线（“-”），不能以中横线（“-”）开头或结尾
     :param s:
     :return:
     """
@@ -124,14 +124,14 @@ def _is_valid_host(s: str) -> bool:
     if is_ascii_str(s):
         import re
 
-        return bool(re.match(r'[a-z0-9-]+', s))
+        return bool(re.match(r'[a-z0-9-_]+', s))
 
     return True
 
 
 def _is_valid_dn(s: str) -> bool:
     """
-    验证域名字段，域名字段由字母、数字以及中横线（“-”）组成，但长度不能为1，不能以中横线（“-”）开头或结尾
+    验证域名字段，域名字段由字母、数字、下划线以及中横线（“-”）组成，但长度不能为1，不能以中横线（“-”）开头或结尾
     :param s:
     :return:
     """

@@ -40,12 +40,12 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(domain.get_host_name(), 'www')
         self.assertEqual(domain.get_domain_name(), 'foobar.com.cn')
 
-        domain = to_domain_obj('www.test.foobar.com.cn')
+        domain = to_domain_obj('_www.test_.foobar.com.cn')
         self.assertIsNotNone(domain)
         self.assertEqual(domain.feild_domain_name, 'foobar')
         self.assertEqual(domain.feild_top_level_domains, ['.com', '.cn'])
-        self.assertEqual(domain.feild_hosts, ['www', 'test'])
-        self.assertEqual(domain.get_host_name(), 'www.test')
+        self.assertEqual(domain.feild_hosts, ['_www', 'test_'])
+        self.assertEqual(domain.get_host_name(), '_www.test_')
         self.assertEqual(domain.get_domain_name(), 'foobar.com.cn')
 
         domain = to_domain_obj('时尚.中国')
