@@ -37,3 +37,12 @@ def to_hex_str(s: str) -> str:
     :return:
     """
     return s.encode('utf-8').hex()
+
+
+def is_ascii_str(s):
+    """
+    判断是否是ASCII字符串
+    :param s:
+    :return:
+    """
+    return all(ord(c) < 128 for c in s)

@@ -26,7 +26,7 @@ setup(
     description="一个简单易用的 Python 库，让写代码成为一件轻松、愉快的事情。",
     long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type="text/markdown",
-    packages=['happy_python'],
+    packages=['happy_python', 'happy_python.resource'],
     zip_safe=False,
     include_package_data=True,
     platforms='any',

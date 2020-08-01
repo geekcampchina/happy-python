@@ -2,6 +2,7 @@ include MANIFEST.in
 include README.rst
 include requirements.txt
 include LICENSE
+include happy_python/resource/tlds.txt
 
 recursive-include docs *
 recursive-include examples *.py

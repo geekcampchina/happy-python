@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from happy_python import bytearray_to_str, gen_random_str, to_hex_str
+from happy_python import bytearray_to_str, gen_random_str, to_hex_str, is_ascii_str
 from happy_python import bytes_to_str
 from happy_python import dict_to_str
 from happy_python import str_to_dict
@@ -31,3 +31,7 @@ class TestUtils(unittest.TestCase):
 
     def test_to_hex_str(self):
         self.assertEqual(to_hex_str('abcde'), '6162636465')
+
+    def test_is_ascii_str(self):
+        self.assertTrue(is_ascii_str('ab123--'))
+        self.assertFalse(is_ascii_str('测试'))
