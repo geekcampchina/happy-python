@@ -28,6 +28,7 @@ from happy_python.str_util import dict_to_str
 from happy_python.str_util import str_to_dict
 from happy_python.json import dict_to_pretty_json
 from happy_python.domain import Domain, to_domain_obj
+from happy_python.cmd import execute_cmd
 
 __all__ = [
     "HappyPyException",
@@ -66,4 +67,5 @@ __all__ = [
     "is_ascii_str",
     "Domain",
     "to_domain_obj",
+    "execute_cmd",
 ]

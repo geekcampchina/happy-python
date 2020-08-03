@@ -6,7 +6,7 @@ import unittest
 from pathlib import PurePath
 from time import sleep
 
-from happy_python import exe_cmd_and_poll_output
+from happy_python import exe_cmd_and_poll_output, execute_cmd
 from happy_python import get_exit_code_of_cmd
 from happy_python import get_exit_status_of_cmd
 from happy_python import get_output_of_cmd
@@ -44,6 +44,21 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result, 'bar' + line_sep)
 
         result = get_output_of_cmd('echo foo', remove_white_char=True)
+        self.assertEqual(result, 'foo')
+
+    def test_execute_cmd(self):
+        line_sep = os.linesep
+
+        code, result = execute_cmd('echo foo')
+        self.assertEqual(code, 0)
+        self.assertEqual(result, 'foo' + line_sep)
+
+        code, result = execute_cmd('echo bar')
+        self.assertEqual(code, 0)
+        self.assertEqual(result, 'bar' + line_sep)
+
+        code, result = execute_cmd('echo foo', remove_white_char=True)
+        self.assertEqual(code, 0)
         self.assertEqual(result, 'foo')
 
     def test_non_blocking_exe_cmd(self):
