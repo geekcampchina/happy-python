@@ -14,8 +14,8 @@ from happy_python.digest import gen_sha512_hexdigest
 from happy_python.datetime import str_to_datetime
 from happy_python.datetime import datetime_to_str
 from happy_python.datetime import get_current_datetime
-from happy_python.datetime import get_current_datetime2
 from happy_python.datetime import get_current_timestamp
+from happy_python.datetime import HappyDatetimeFormat
 from happy_python.cmd import get_exit_code_of_cmd
 from happy_python.cmd import get_exit_status_of_cmd
 from happy_python.cmd import get_output_of_cmd
@@ -40,7 +40,6 @@ __all__ = [
     "gen_sha1_hexdigest",
     "gen_sha512_hexdigest",
     "get_current_datetime",
-    "get_current_datetime2",
     "get_current_timestamp",
     "get_exit_code_of_cmd",
     "get_exit_status_of_cmd",
@@ -68,4 +67,5 @@ __all__ = [
     "Domain",
     "to_domain_obj",
     "execute_cmd",
+    "HappyDatetimeFormat",
 ]
