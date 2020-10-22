@@ -44,7 +44,7 @@ class HappyConfigParser(object):
                 print("[Error] 配置文件 %s 不存在" % filename)
                 exit(1)
 
-            with open(filename, 'r') as f:
+            with open(filename, 'r', encoding='UTF-8') as f:
                 content = f.readlines()
                 HappyConfigParser._loads(''.join(content), happy_config_object)
         except Exception as e:
@@ -100,7 +100,7 @@ class HappyConfigParser(object):
                 print("[Error] 配置文件 %s 不存在" % filename)
                 exit(1)
 
-            with open(filename, 'r') as f:
+            with open(filename, 'r', encoding='UTF-8') as f:
                 content = ''.join(f.readlines())
 
                 for var, value in var_dict.items():
