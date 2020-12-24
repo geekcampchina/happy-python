@@ -31,10 +31,10 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(11, len(result))
 
     def test_to_hex_str(self):
-        self.assertEqual(to_hex_str('abcde'), '6162636465')
+        self.assertEqual(to_hex_str('abcde'.encode('utf-8')), '6162636465')
 
     def test_to_hex_str_with_delimiter(self):
-        self.assertEqual(to_hex_str_with_delimiter('abcde', ' '), '61 62 63 64 65')
+        self.assertEqual(to_hex_str_with_delimiter('abcde'.encode('utf-8'), ' '), '61 62 63 64 65')
 
     def test_is_ascii_str(self):
         self.assertTrue(is_ascii_str('ab123--'))

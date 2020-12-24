@@ -30,39 +30,23 @@ def gen_random_str(str_len: int = 10) -> str:
     return ''.join(random.choices(string.ascii_letters + string.digits, k=str_len))
 
 
-def to_hex_str(s: str) -> str:
+def to_hex_str(bb: bytes) -> str:
     """
-    将字符串转换为十六进制表示的字符串
-    :param s:
+    将bytes转换为十六进制表示的字符串
+    :param bb:
     :return:
     """
-    return s.encode('utf-8').hex()
+    return bb.hex()
 
 
-def to_hex_str_with_delimiter(s: str, delimiter: str) -> str:
+def to_hex_str_with_delimiter(bb: bytes, delimiter: str) -> str:
     """
-    将字符串转换为十六进制表示的字符串
-    :param s:
+    将bytes转换为十六进制表示的字符串
+    :param bb:
     :param delimiter: 分隔符
     :return:
     """
-    hex_str = s.encode('utf-8').hex()
-
-    output = ''
-    i = 0
-    max_len = len(hex_str)
-
-    while i < max_len:
-        output += hex_str[i]
-
-        length_postion = i + 1
-
-        if length_postion % 2 == 0 and length_postion < max_len:
-            output += delimiter
-
-        i += 1
-
-    return output
+    return bb.hex(delimiter)
 
 
 def from_hex_str(s: str, delimiter: str = '0x') -> bytes:
@@ -72,7 +56,6 @@ def from_hex_str(s: str, delimiter: str = '0x') -> bytes:
     :param delimiter: 分隔符
     :return:
     """
-
     _s = s
 
     # 删除分隔符
