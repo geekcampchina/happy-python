@@ -65,6 +65,23 @@ def to_hex_str_with_delimiter(s: str, delimiter: str) -> str:
     return output
 
 
+def from_hex_str(s: str, delimiter: str = '0x') -> bytes:
+    """
+    将十六进制表示的字符串转为bytes。比如 0x0E0x0A0x5D。
+    :param s: 十六进制表示的字符串，可以带分隔符。比如 0E 0A
+    :param delimiter: 分隔符
+    :return:
+    """
+
+    _s = s
+
+    # 删除分隔符
+    if delimiter:
+        _s = _s.replace(delimiter, '')
+
+    return bytes.fromhex(_s)
+
+
 def is_ascii_str(s):
     """
     判断是否是ASCII字符串
