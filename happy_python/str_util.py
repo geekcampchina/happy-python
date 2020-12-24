@@ -39,6 +39,32 @@ def to_hex_str(s: str) -> str:
     return s.encode('utf-8').hex()
 
 
+def to_hex_str_with_delimiter(s: str, delimiter: str) -> str:
+    """
+    将字符串转换为十六进制表示的字符串
+    :param s:
+    :param delimiter: 分隔符
+    :return:
+    """
+    hex_str = s.encode('utf-8').hex()
+
+    output = ''
+    i = 0
+    max_len = len(hex_str)
+
+    while i < max_len:
+        output += hex_str[i]
+
+        length_postion = i + 1
+
+        if length_postion % 2 == 0 and length_postion < max_len:
+            output += delimiter
+
+        i += 1
+
+    return output
+
+
 def is_ascii_str(s):
     """
     判断是否是ASCII字符串
