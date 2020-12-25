@@ -32,9 +32,12 @@ class TestUtils(unittest.TestCase):
 
     def test_to_hex_str(self):
         self.assertEqual(to_hex_str('abcde'.encode('utf-8')), '6162636465')
+        self.assertEqual(to_hex_str('Hello World'.encode('utf-8')), '48656C6C6F20576F726C64')
 
     def test_to_hex_str_with_delimiter(self):
         self.assertEqual(to_hex_str_with_delimiter('abcde'.encode('utf-8'), ' '), '61 62 63 64 65')
+        self.assertEqual(to_hex_str_with_delimiter(
+            'Hello World'.encode('utf-8'), ' '), '48 65 6C 6C 6F 20 57 6F 72 6C 64')
 
     def test_is_ascii_str(self):
         self.assertTrue(is_ascii_str('ab123--'))

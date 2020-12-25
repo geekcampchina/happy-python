@@ -36,7 +36,7 @@ def to_hex_str(bb: bytes) -> str:
     :param bb:
     :return:
     """
-    return bb.hex()
+    return bb.hex().upper()
 
 
 def to_hex_str_with_delimiter(bb: bytes, delimiter: str) -> str:
@@ -46,7 +46,7 @@ def to_hex_str_with_delimiter(bb: bytes, delimiter: str) -> str:
     :param delimiter: 分隔符
     :return:
     """
-    return bb.hex(delimiter)
+    return bb.hex(delimiter).upper()
 
 
 def from_hex_str(s: str, delimiter: str = '0x') -> bytes:
