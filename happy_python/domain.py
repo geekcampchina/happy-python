@@ -41,7 +41,7 @@ def _load_tlds_db() -> None:
     tlds_resource_file = str(PurePath(__file__).parent / 'resource' / 'tlds.txt')
 
     try:
-        with open(tlds_resource_file) as f:
+        with open(tlds_resource_file, encoding='UTF-8') as f:
             for line in f.readlines():
                 TLDs.append(line.strip())
     except FileNotFoundError:
