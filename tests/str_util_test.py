@@ -31,6 +31,7 @@ class TestUtils(unittest.TestCase):
 
     def test_to_hex_str(self):
         self.assertEqual(to_hex_str('abcde'), '6162636465')
+        self.assertEqual(to_hex_str('abcde', ' '), '61 62 63 64 65')
 
     def test_is_ascii_str(self):
         self.assertTrue(is_ascii_str('ab123--'))

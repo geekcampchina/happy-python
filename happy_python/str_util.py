@@ -30,13 +30,14 @@ def gen_random_str(str_len: int = 10) -> str:
     return ''.join(random.choices(string.ascii_letters + string.digits, k=str_len))
 
 
-def to_hex_str(s: str) -> str:
+def to_hex_str(s: str, delimiter='') -> str:
     """
     将字符串转换为十六进制表示的字符串
+    :param delimiter: 分隔符
     :param s:
     :return:
     """
-    return s.encode('utf-8').hex()
+    return s.encode('utf-8').hex(delimiter) if delimiter else s.encode('utf-8').hex()
 
 
 def is_ascii_str(s):
