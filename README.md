@@ -32,19 +32,19 @@ Happy-Python 是一个简单易用的 Python 库，让写代码成为一件轻�
 
 `python setup.py bdist_wheel`
 
-在 `dist` 目录下会生成类似 `Happy_Python-0.0.4-py3-none-any.whl` 的安装包。
+在 `dist` 目录下会生成类似 `happy_python-0.2.6-py3-none-any.whl` 的安装包。
 
 
 ### 本地安装
 
 全局安装：
      
-`pip install -U Happy_Python-0.0.4-py3-none-any.whl`
+`pip install -U happy_python-0.2.6-py3-none-any.whl`
  
 用户目录安装：
     
-`pip install --user -U Happy_Python-0.0.4-py3-none-any.whl`
+`pip install --user -U happy_python-0.2.6-py3-none-any.whl`
 
 ### 卸载
 
-`pip uninstall Happy-Python`
+`pip uninstall happy-python`
