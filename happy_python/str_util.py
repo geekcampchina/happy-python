@@ -30,24 +30,32 @@ def gen_random_str(str_len: int = 10) -> str:
     return ''.join(random.choices(string.ascii_letters + string.digits, k=str_len))
 
 
-def to_hex_str1(s: str, delimiter='') -> str:
+def to_hex_str1(s: str, is_upper: bool = True, delimiter='') -> str:
     """
     将字符串转换为十六进制表示的字符串
+    :param is_upper: 是否大写
     :param delimiter: 分隔符
     :param s:
     :return:
     """
+    if is_upper:
+        return s.encode('utf-8').hex(delimiter).upper() if delimiter else s.encode('utf-8').hex().upper()
+
     return s.encode('utf-8').hex(delimiter) if delimiter else s.encode('utf-8').hex()
 
 
-def to_hex_str2(bb: bytes, delimiter='') -> str:
+def to_hex_str2(bb: bytes, is_upper: bool = True, delimiter='') -> str:
     """
     将bytes转换为十六进制表示的字符串
+    :param is_upper: 是否大写
     :param delimiter: 分隔符
     :param bb:
     :return:
     """
-    return bb.hex(delimiter).upper() if delimiter else bb.hex().upper()
+    if is_upper:
+        return bb.hex(delimiter).upper() if delimiter else bb.hex().upper()
+
+    return bb.hex(delimiter) if delimiter else bb.hex()
 
 
 def from_hex_str(s: str, delimiter: str = '0x') -> bytes:

@@ -32,15 +32,15 @@ class TestUtils(unittest.TestCase):
 
     def test_to_hex_str1(self):
         self.assertEqual(to_hex_str1('abcde'), '6162636465')
-        self.assertEqual(to_hex_str1('abcde', ' '), '61 62 63 64 65')
+        self.assertEqual(to_hex_str1('abcde', True, ' '), '61 62 63 64 65')
 
     def test_to_hex_str2(self):
         self.assertEqual(to_hex_str2('abcde'.encode('utf-8')), '6162636465')
         self.assertEqual(to_hex_str2('Hello World'.encode('utf-8')), '48656C6C6F20576F726C64')
 
-        self.assertEqual(to_hex_str2('abcde'.encode('utf-8'), ' '), '61 62 63 64 65')
+        self.assertEqual(to_hex_str2('abcde'.encode('utf-8'), True, ' '), '61 62 63 64 65')
         self.assertEqual(to_hex_str2(
-            'Hello World'.encode('utf-8'), ' '), '48 65 6C 6C 6F 20 57 6F 72 6C 64')
+            'Hello World'.encode('utf-8'), True, ' '), '48 65 6C 6C 6F 20 57 6F 72 6C 64')
 
     def test_is_ascii_str(self):
         self.assertTrue(is_ascii_str('ab123--'))
