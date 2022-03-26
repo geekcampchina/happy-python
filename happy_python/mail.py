@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from dataclasses import dataclass
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.utils import formatdate
+from os.path import basename
 
 
 @dataclass
@@ -18,12 +22,13 @@ class HappyEmail:
     """
     发送纯文本邮件类
     
-    self.stmp_server: STMP服务器信息，主机地址和端口。比如 (localhost, 465)
-    self.stmp_auth: STMP服务器登录信息，用户名和密码。比如 (admin@bar.com, 123456)
-    self.recipients: 收件人列表。比如 (EmailAddr('收件人', mail_to@foo.com), )
-    self.sender: 发件人。比如 EmailAddr('发件人', mail_from@bar.com)
-    self.subject: 邮件标题
-    self.body: 邮件正文
+    stmp_server: STMP服务器信息，主机地址和端口。比如 (localhost, 465)
+    stmp_auth: STMP服务器登录信息，用户名和密码。比如 (admin@bar.com, 123456)
+    recipients: 收件人列表。比如 (EmailAddr('收件人', mail_to@foo.com), )
+    sender: 发件人。比如 EmailAddr('发件人', mail_from@bar.com)
+    subject: 邮件标题
+    body: 邮件正文
+    files: 邮件附件列表
     use_tls: 启用 SSL/TLS 连接
     enable_debug: 启用调试模式
     """
@@ -33,6 +38,7 @@ class HappyEmail:
     sender: EmailAddr
     subject: str
     body: str
+    files: list
     use_tls: bool = True
     enable_debug: bool = False
 
@@ -51,8 +57,6 @@ class HappyEmail:
             stmp_host, stmp_port = self.stmp_server
             stmp_user, stmp_pwd = self.stmp_auth
 
-            body = MIMEText(self.body, 'plain', 'utf-8')
-
             to_str = ''
             recipients = []
 
@@ -62,9 +66,23 @@ class HappyEmail:
 
             to_str = to_str[:-1]
 
-            body['to'] = to_str
-            body['from'] = formataddr(self.sender.to_tuple())
-            body['subject'] = Header(self.subject, 'utf-8')
+            msg = MIMEMultipart()
+            msg['From'] = formataddr(self.sender.to_tuple())
+            msg['To'] = to_str
+            msg['Date'] = formatdate(localtime=True)
+            msg['Subject'] = Header(self.subject, 'utf-8')
+
+            msg.attach(MIMEText(self.body, 'plain', 'utf-8'))
+
+            for f in self.files:
+                with open(f, "rb") as fil:
+                    part = MIMEApplication(fil.read(), Name=basename(f))
+
+                part.add_header('Content-Disposition',
+                                'attachment',
+                                filename=('utf-8', '', basename(f))
+                                )
+                msg.attach(part)
 
             client = smtplib.SMTP_SSL(stmp_host, stmp_port) if self.use_tls else smtplib.SMTP(stmp_host, stmp_port)
 
@@ -72,7 +90,7 @@ class HappyEmail:
                 client.set_debuglevel(1)
 
             client.login(stmp_user, stmp_pwd)
-            client.sendmail(self.sender.addr, recipients, body.as_string())
+            client.sendmail(self.sender.addr, recipients, msg.as_string())
             client.quit()
 
             hlog.info('发送邮件成功')

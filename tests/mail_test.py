@@ -13,5 +13,6 @@ class TestUtils(unittest.TestCase):
                                     EmailAddr('收件人2名称', 'admin2@foo.com>')],
                         sender=EmailAddr('发件人名称', 'user@bar.com'),
                         subject='测试邮件',
-                        body='邮件正文')
+                        body='邮件正文',
+                        files=[])
         self.assertTrue(he.send_mail(enable_mock=True))
