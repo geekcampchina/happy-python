@@ -23,7 +23,7 @@ from happy_python.cmd import non_blocking_exe_cmd
 from happy_python.cmd import exe_cmd_and_poll_output
 from happy_python.misc import callback_succeed_once
 from happy_python.str_util import bytearray_to_str, gen_random_str, to_hex_str1, is_ascii_str, to_hex_str2, \
-    from_hex_str
+    from_hex_str, is_printable_ascii_str
 from happy_python.str_util import bytes_to_str
 from happy_python.str_util import dict_to_str
 from happy_python.str_util import str_to_dict
@@ -66,6 +66,7 @@ __all__ = [
     "EmailAddr",
     "HappyEmail",
     "is_ascii_str",
+    "is_printable_ascii_str",
     "Domain",
     "to_domain_obj",
     "execute_cmd",

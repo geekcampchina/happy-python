@@ -3,7 +3,7 @@
 import unittest
 
 from happy_python import bytearray_to_str, gen_random_str, to_hex_str1, is_ascii_str, to_hex_str2, \
-    from_hex_str
+    from_hex_str, is_printable_ascii_str
 from happy_python import bytes_to_str
 from happy_python import dict_to_str
 from happy_python import str_to_dict
@@ -45,6 +45,11 @@ class TestUtils(unittest.TestCase):
     def test_is_ascii_str(self):
         self.assertTrue(is_ascii_str('ab123--'))
         self.assertFalse(is_ascii_str('测试'))
+
+    def test_is_printable_ascii_str(self):
+        self.assertFalse(is_printable_ascii_str('A\n'))
+        self.assertTrue(is_printable_ascii_str('ab123--'))
+        self.assertFalse(is_printable_ascii_str('测试'))
 
     def test_from_hex_str(self):
         self.assertEqual(from_hex_str('0x0E0x0A'), b'\x0e\n')

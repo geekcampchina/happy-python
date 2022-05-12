@@ -81,3 +81,12 @@ def is_ascii_str(s):
     :return:
     """
     return all(ord(c) < 128 for c in s)
+
+
+def is_printable_ascii_str(s):
+    """
+    判断是否是可见ASCII字符组成的字符串
+    :param s:
+    :return:
+    """
+    return all(32 <= ord(c) <= 127 for c in s)
