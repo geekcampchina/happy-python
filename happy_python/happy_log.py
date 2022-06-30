@@ -46,6 +46,8 @@ class HappyLog(object):
     logger_name = ''
     logger = None
     default_file_handler = None
+    default_stream_handler = None
+    default_handler_count = 0
 
     def __init__(self, log_ini='', logger_name=''):
         self.log_level: HappyLogLevel = HappyLogLevel.INFO
@@ -59,9 +61,6 @@ class HappyLog(object):
     def get_instance(log_ini='', logger_name=''):
         """
         单例模式
-        :param log_ini:
-        :param logger_name
-        :return:
         """
         global _HappyLogSingletonObj
         global _HappyLogSingletonDefaultObj
@@ -88,25 +87,55 @@ class HappyLog(object):
         :param log_level: 有效范围0~5
         :return:
         """
-        import sys
-
         self.log_level = HappyLogLevel(log_level)
         self.logger.setLevel(self.log_level.name)
 
-    def load_default_config(self):
+    def build_default_config(self, handler: logging.StreamHandler | logging.FileHandler, _formatter: logging.Formatter):
+        self.default_handler_count += 1
+
+        self.logger = logging.getLogger()
+
+        self.logger.setLevel(self.log_level.name)
+        handler.setFormatter(_formatter)
+        self.logger.addHandler(handler)
+
+        if self.default_handler_count == 1:
+            self.logger.info('未启用日志配置文件，加载默认设置')
+
+    def load_stream_default_config(self, formatter: logging.Formatter = logging.Formatter(
+                                       '%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')):
         """
         载入默认日志配置
         :return:
         """
         import sys
 
-        self.logger = logging.getLogger()
-        self.logger.setLevel(self.log_level.name)
-        self.default_file_handler = logging.StreamHandler(sys.stdout)
-        formatter = logging.Formatter('%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')
-        self.default_file_handler.setFormatter(formatter)
-        self.logger.addHandler(self.default_file_handler)
-        self.logger.debug('未启用日志配置文件，加载默认设置。')
+        if self.logger and self.default_stream_handler:
+            self.logger.removeHandler(self.default_stream_handler)
+
+        self.default_stream_handler = logging.StreamHandler(sys.stdout)
+        self.build_default_config(handler=self.default_stream_handler, _formatter=formatter)
+
+    def load_file_default_config(self,
+                                 filename: str,
+                                 formatter: logging.Formatter = logging.Formatter(
+                                     '%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')):
+        """
+        载入默认日志配置
+        :return:
+        """
+        from pathlib import Path
+
+        if filename:
+            Path(filename).parent.mkdir(parents=True, exist_ok=True)
+
+            if self.logger and self.default_file_handler:
+                self.logger.removeHandler(self.default_file_handler)
+
+            self.default_file_handler = logging.FileHandler(filename)
+            self.build_default_config(handler=self.default_file_handler, _formatter=formatter)
+        else:
+            self.logger.error('必须指定日志文件名')
 
     def load_config(self):
         if os.path.exists(self.log_ini):
@@ -116,12 +145,15 @@ class HappyLog(object):
             if self.default_file_handler:
                 self.logger.removeHandler(self.default_file_handler)
 
+            if self.default_stream_handler:
+                self.logger.removeHandler(self.default_stream_handler)
+
             self.logger.info('日志配置文件 \'%s\' 加载成功。' % self.log_ini)
 
             if self.logger_name:
                 self.logger = logging.getLogger(self.logger_name)
         else:
-            self.load_default_config()
+            self.load_stream_default_config()
 
     def enter_func(self, func_name: str):
         self.logger.trace("Enter function: %s" % func_name)
