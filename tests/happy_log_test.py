@@ -66,6 +66,12 @@ class TestHappyLog(unittest.TestCase):
     def test_trace(self):
         self.assert_log(self.hlog.trace, 'trace')
 
+    def test_input(self):
+        self.assert_log(self.hlog.trace, 'trace')
+
+    def test_output(self):
+        self.assert_log(self.hlog.trace, 'trace')
+
     def test_enter_func(self):
         func_name = inspect.stack()[0][3]
 

@@ -181,3 +181,9 @@ class HappyLog(object):
 
     def trace(self, s: str):
         self.logger.trace(s)
+
+    def input(self, var_name: str, var_value):
+        self.logger.trace('%s=%s' % (var_name, var_value))
+
+    def output(self, var_name: str, var_value):
+        self.logger.trace('%s=%s' % (var_name, var_value))
