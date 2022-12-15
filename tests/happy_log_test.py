@@ -43,7 +43,7 @@ class TestHappyLog(unittest.TestCase):
             with self.assertLogs(self.logger, level='TRACE') as cm:
                 func(var_name, var_value)
 
-            self.assertEqual(cm.output, [('TRACE:root:%s=%s' % (var_name, var_value))])
+            self.assertEqual(cm.output, [('TRACE:root:var->%s=%s' % (var_name, var_value))])
 
         foo = 1
         assert_var_log(self.hlog.var, 'foo', foo)
@@ -67,10 +67,24 @@ class TestHappyLog(unittest.TestCase):
         self.assert_log(self.hlog.trace, 'trace')
 
     def test_input(self):
-        self.assert_log(self.hlog.trace, 'trace')
+        def assert_var_log(func, var_name: str, var_value):
+            with self.assertLogs(self.logger, level='TRACE') as cm:
+                func(var_name, var_value)
+
+            self.assertEqual(cm.output, [('TRACE:root:input->%s=%s' % (var_name, var_value))])
+
+        foo = 1
+        assert_var_log(self.hlog.input, 'foo', foo)
 
     def test_output(self):
-        self.assert_log(self.hlog.trace, 'trace')
+        def assert_var_log(func, var_name: str, var_value):
+            with self.assertLogs(self.logger, level='TRACE') as cm:
+                func(var_name, var_value)
+
+            self.assertEqual(cm.output, [('TRACE:root:output->%s=%s' % (var_name, var_value))])
+
+        foo = 1
+        assert_var_log(self.hlog.output, 'foo', foo)
 
     def test_enter_func(self):
         func_name = inspect.stack()[0][3]

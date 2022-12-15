@@ -162,7 +162,7 @@ class HappyLog(object):
         self.logger.trace("Exit function: %s" % func_name)
 
     def var(self, var_name: str, var_value):
-        self.logger.trace('%s=%s' % (var_name, var_value))
+        self.logger.trace('var->%s=%s' % (var_name, var_value))
 
     def critical(self, s: str):
         self.logger.critical(s)
@@ -183,7 +183,7 @@ class HappyLog(object):
         self.logger.trace(s)
 
     def input(self, var_name: str, var_value):
-        self.logger.trace('%s=%s' % (var_name, var_value))
+        self.logger.trace('input->%s=%s' % (var_name, var_value))
 
     def output(self, var_name: str, var_value):
-        self.logger.trace('%s=%s' % (var_name, var_value))
+        self.logger.trace('output->%s=%s' % (var_name, var_value))
