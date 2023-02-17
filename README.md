@@ -1,6 +1,6 @@
 # happy-python
 
-Happy-Python 是一个简单易用的 Python 库，让写代码成为一件轻松、愉快的事情。
+Happy-Python是一个简单易用的Python库，让编程轻松愉快
 
 ## 从 pip 安装
 

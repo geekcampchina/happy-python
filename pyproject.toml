@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "happy-python"
+version = "0.0.0"
+description = "Happy-Python是一个简单易用的Python库，让编程轻松愉快"
+authors = ["Chengdu Geek Camp <info@cdgeekcamp.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/geekcampchina/happy-python"
+repository = "https://github.com/geekcampchina/happy-python"
+documentation = "https://github.com/geekcampchina/happy-python"
+
+classifiers = [
+    'Intended Audience :: Developers',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Topic :: Software Development :: Libraries :: Python Modules'
+]
+
+packages = [
+    {include = "happy_python"}
+]
+
+include = ["happy_python.resource"]
+
+[tool.poetry.dependencies]
+python = "^3.8.5"
+
+[build-system]
+requires = ["poetry-core", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "semver"
+
+[tool.poetry-dynamic-versioning.substitution]
+folders = [
+  { path = "happy_python" }
+]
