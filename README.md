@@ -26,14 +26,13 @@ Happy-Python是一个简单易用的Python库，让编程轻松愉快
 
 安装依赖包：
 
-`pip install -U setuptools wheel`
+`pip install poetry`
 
 运行：
 
-`python setup.py bdist_wheel`
+`poetry build -f wheel`
 
 在 `dist` 目录下会生成类似 `happy_python-0.2.6-py3-none-any.whl` 的安装包。
-
 
 ### 本地安装
 
