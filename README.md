@@ -2,7 +2,7 @@
 
 Happy-Python是一个简单易用的Python库，让编程轻松愉快
 
-## 安装依赖
+## 安装开发依赖
 
 `pip install poetry pytest`
 
@@ -12,7 +12,7 @@ Happy-Python是一个简单易用的Python库，让编程轻松愉快
 
 `poetry run pytest`
 
-## 安装
+## 安装happy-python
 
 ### Pip安装
 
