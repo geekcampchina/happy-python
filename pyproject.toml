@@ -18,7 +18,7 @@ classifiers = [
 ]
 
 packages = [
-    {include = "happy_python"}
+    { include = "happy_python" }
 ]
 
 include = ["happy_python.resource"]
@@ -38,5 +38,5 @@ format = "{base}"
 
 [tool.poetry-dynamic-versioning.substitution]
 folders = [
-  { path = "happy_python" }
+    { path = "happy_python" }
 ]
