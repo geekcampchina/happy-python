@@ -2,48 +2,26 @@
 
 Happy-Python是一个简单易用的Python库，让编程轻松愉快
 
-## 从 pip 安装
+## 安装依赖
 
-`pip install happy-python`
+`pip install poetry pytest`
 
 ## 单元测试
 
-基于 `test` 文件夹中的 `\\__init__.py` -> `load_tests` 自动发现：
+运行单元测试：
 
-`python -m unittest tests`
+`poetry run pytest`
 
-## 使用方法
+## 安装
 
-### 使用
+### Pip安装
 
-比如：
+`pip install happy-python`
 
-`from happy_python import HappyLog`
+## 本地安装
 
-## 本地打包安装
-
-### 打包
-
-安装依赖包：
-
-`pip install poetry`
-
-运行：
-
-`poetry build -f wheel`
-
-在 `dist` 目录下会生成类似 `happy_python-0.2.6-py3-none-any.whl` 的安装包。
-
-### 本地安装
-
-全局安装：
-     
-`pip install -U happy_python-0.2.6-py3-none-any.whl`
- 
-用户目录安装：
-    
-`pip install --user -U happy_python-0.2.6-py3-none-any.whl`
-
-### 卸载
-
-`pip uninstall happy-python`
+```bash
+rm -rf dist/
+poetry build -f wheel
+pip install -U --user dist/happy_python-*-py3-none-any.whl
+```
