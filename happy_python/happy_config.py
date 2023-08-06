@@ -111,13 +111,13 @@ class HappyConfigParser(object):
 
             setattr(happy_config_object, _new_name, v)
 
-        from configparser import ConfigParser
+        from configparser import RawConfigParser
 
         if not isinstance(happy_config_object, HappyConfigBase):
             raise HappyPyException('happy_config_object 不是 HappyConfigBase 类的子类对象。')
 
         try:
-            cfg = ConfigParser()
+            cfg = RawConfigParser()
             cfg.read_string(content)
 
             class_attrs = happy_config_object.__dict__

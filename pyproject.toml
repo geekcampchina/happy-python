@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "happy-python"
-version = "0.4.0"
+version = "0.4.1"
 description = "Happy-Python是一个简单易用的Python库，让编程轻松愉快"
 authors = ["Chengdu Geek Camp <info@cdgeekcamp.com>"]
 license = "MIT"

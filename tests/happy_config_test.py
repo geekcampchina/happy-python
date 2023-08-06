@@ -9,6 +9,7 @@ class FooConfig(HappyConfigBase):
         super().__init__()
 
         self.section = 'main'
+        self.format = ''
         self.example_name = ''
         self.example_port = 0
         self.example_enable = True
@@ -22,6 +23,7 @@ class TestHappyConfigParser(unittest.TestCase):
 
         config = ConfigParser()
         config['foo_section'] = dict()
+        config['foo_section']['format'] = '%(asctime)s %(process)s [%(levelname)s] %(message)s'
         config['foo_section']['example_name'] = 'abc'
         config['foo_section']['example_port'] = '5432'
         config['foo_section']['example_enable'] = 'True'
@@ -44,6 +46,7 @@ class TestHappyConfigParser(unittest.TestCase):
         HappyConfigParser.load('example.ini', foo_config)
 
         self.assertEqual(foo_config.section, 'foo_section')
+        self.assertEqual(foo_config.format, '%(asctime)s %(process)s [%(levelname)s] %(message)s')
         self.assertEqual(foo_config.example_name, 'abc')
         self.assertEqual(foo_config.example_port, 5432)
         self.assertTrue(foo_config.example_enable)
@@ -57,6 +60,7 @@ class TestHappyConfigParser(unittest.TestCase):
             HappyConfigParser._loads(content, foo_config)
 
             self.assertEqual(foo_config.section, 'foo_section')
+            self.assertEqual(foo_config.format, '%(asctime)s %(process)s [%(levelname)s] %(message)s')
             self.assertEqual(foo_config.example_name, 'abc')
             self.assertEqual(foo_config.example_port, 5432)
             self.assertTrue(foo_config.example_enable)
@@ -69,6 +73,7 @@ class TestHappyConfigParser(unittest.TestCase):
         HappyConfigParser.load_with_var('example.ini', {'log_dirname': 'log'}, foo_config)
 
         self.assertEqual(foo_config.section, 'foo_section')
+        self.assertEqual(foo_config.format, '%(asctime)s %(process)s [%(levelname)s] %(message)s')
         self.assertEqual(foo_config.example_name, 'abc')
         self.assertEqual(foo_config.example_port, 5432)
         self.assertTrue(foo_config.example_enable)
@@ -82,6 +87,7 @@ class TestHappyConfigParser(unittest.TestCase):
         HappyConfigParser.load('example.ini', foo_config)
 
         self.assertEqual(foo_config.section, 'foo_section')
+        self.assertEqual(foo_config.format, '%(asctime)s %(process)s [%(levelname)s] %(message)s')
         self.assertEqual(foo_config.example_name, 'abc')
         self.assertEqual(foo_config.example_port, 5432)
         self.assertTrue(foo_config.example_enable)
