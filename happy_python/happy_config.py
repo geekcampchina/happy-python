@@ -7,12 +7,26 @@
 
 import os
 from abc import ABCMeta
+from dataclasses import dataclass
 
 from happy_python import HappyPyException
 
 
+@dataclass
+class HappyConfigXListNode:
+    prefix: str
+    keys: list[str]
+
+
+@dataclass
+class HappyConfigXList:
+    section: str
+    node: HappyConfigXListNode
+
+
 class HappyConfigBase(object, metaclass=ABCMeta):
     _section = 'main'
+    _xlist: list[HappyConfigXList] = []
 
     def __init__(self):
         pass
@@ -31,6 +45,34 @@ class HappyConfigBase(object, metaclass=ABCMeta):
             self._section = value
         else:
             raise ValueError("指定的 section 属性值无效。")
+
+    def xlist_add(self, prefix: str, key: str, section: str = ''):
+        __section = self._section if section == '' else section
+        _key = '%s.%s' % (prefix, key)
+
+        if len(self._xlist) == 0:
+            self._xlist.append(HappyConfigXList(section=__section,
+                                                node=HappyConfigXListNode(prefix=prefix,
+                                                                          keys=[_key])))
+        else:
+            for xlist in self._xlist:
+                if xlist.section == __section and xlist.node.prefix == prefix:
+                    if _key not in xlist.node.keys:
+                        xlist.node.keys.append(_key)
+
+    def xlist_key(self, prefix: str, section: str = '') -> list[str]:
+        __section = self._section if section == '' else section
+
+        for xlist in self._xlist:
+            if xlist.section == __section and xlist.node.prefix == prefix:
+                return xlist.node.keys
+
+        return []
+
+    def xlist_get(self, prefix: str, key: str = ''):
+        key = prefix + ('.' + key if key else '')
+
+        return self.__dict__[key] if key in self.__dict__ else None
 
 
 class HappyConfigParser(object):
@@ -53,6 +95,22 @@ class HappyConfigParser(object):
 
     @staticmethod
     def _loads(content: str, happy_config_object: HappyConfigBase):
+        def set_attr(t, _name, _new_name):
+            if t is str:
+                v = cfg.get(section, _name)
+            elif t is int:
+                v = cfg.getint(section, _name)
+            elif t is bool:
+                v = cfg.getboolean(section, _name)
+            elif t is float:
+                v = cfg.getfloat(section, _name)
+            elif t is list:
+                v = cfg.get(section, _name).split(',')
+            else:
+                v = cfg.getboolean(section, _name)
+
+            setattr(happy_config_object, _new_name, v)
+
         from configparser import ConfigParser
 
         if not isinstance(happy_config_object, HappyConfigBase):
@@ -68,27 +126,21 @@ class HappyConfigParser(object):
             for name, value in class_attrs.items():
                 if name == '_section':
                     continue
+                set_attr(type(value), name, name)
+            for section, section_obj in cfg.items():
+                if section == '_section':
+                    continue
 
-                t = type(value)
+                for name, value in section_obj.items():
+                    if not name.startswith('!'):
+                        continue
 
-                if t is str:
-                    v = cfg.get(section, name)
-                    exec("happy_config_object.%s='%s'" % (name, v))
-                elif t is int:
-                    v = cfg.getint(section, name)
-                    exec("happy_config_object.%s=%d" % (name, v))
-                elif t is bool:
-                    v = cfg.getboolean(section, name)
-                    exec("happy_config_object.%s=%s" % (name, v))
-                elif t is float:
-                    v = cfg.getfloat(section, name)
-                    exec("happy_config_object.%s=%f" % (name, v))
-                elif t is list:
-                    v = cfg.get(section, name).split(',')
-                    exec("happy_config_object.%s=%s" % (name, v))
-                else:
-                    v = cfg.getboolean(section, name)
-                    exec("happy_config_object.%s=%s" % (name, v))
+                    new_name = name[1:]
+                    parts = new_name.split('.')
+
+                    if len(parts) >= 2:
+                        happy_config_object.xlist_add(section=section, prefix=parts[0], key=parts[1])
+                        set_attr(type(value), name, new_name)
         except Exception as e:
             print("[Error] 配置文件读取错误：%s" % str(e))
             exit(1)
