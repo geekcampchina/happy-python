@@ -156,7 +156,7 @@ class HappyLog(object):
             if self.default_stream_handler:
                 self.logger.removeHandler(self.default_stream_handler)
 
-            self.logger.info('日志配置文件 \'%s\' 加载成功。' % self.log_ini)
+            self.logger.info('日志配置文件 \'%s\' 加载成功' % self.log_ini)
 
             if self.logger_name:
                 self.logger = logging.getLogger(self.logger_name)
