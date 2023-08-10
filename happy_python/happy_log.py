@@ -67,7 +67,7 @@ class HappyLog(object):
 
         if len(log_ini) > 0 and not os.path.exists(log_ini):
             logger = logging.getLogger()
-            logger.error("配置文件 %s 不存在" % log_ini)
+            logger.error("日志配置文件 %s 不存在" % log_ini)
             exit(1)
 
         if _HappyLogSingletonObj:
