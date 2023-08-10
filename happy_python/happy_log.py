@@ -108,7 +108,7 @@ class HappyLog(object):
         self.logger.addHandler(handler)
 
         if self.default_handler_count == 1:
-            self.logger.debug('未启用日志配置文件，加载默认设置')
+            self.logger.info('未启用日志配置文件，加载默认设置')
 
     def load_stream_default_config(self, formatter: logging.Formatter = logging.Formatter(
                                        '%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')):
