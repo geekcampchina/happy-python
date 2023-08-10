@@ -65,10 +65,18 @@ class HappyLog(object):
         global _HappyLogSingletonObj
         global _HappyLogSingletonDefaultObj
 
+        if not os.path.exists(log_ini):
+            logger = logging.getLogger()
+            logger.error("配置文件 %s 不存在" % log_ini)
+            exit(1)
+
         if _HappyLogSingletonObj:
+            if len(log_ini) > 0:
+                _HappyLogSingletonObj.load_config()
+
             return _HappyLogSingletonObj
 
-        if os.path.exists(log_ini):
+        if len(log_ini) > 0:
             _HappyLogSingletonObj = HappyLog(log_ini, logger_name)
             obj = _HappyLogSingletonObj
         else:
