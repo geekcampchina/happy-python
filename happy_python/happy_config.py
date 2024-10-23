@@ -87,8 +87,8 @@ class HappyConfigParser(object):
                 exit(1)
 
             with open(filename, 'r', encoding='UTF-8') as f:
-                content = f.readlines()
-                HappyConfigParser._loads(''.join(content), happy_config_object)
+                content = f.read()
+                HappyConfigParser._loads(content, happy_config_object)
         except Exception as e:
             print("[Error] 配置文件读取错误：%s" % str(e))
             exit(1)

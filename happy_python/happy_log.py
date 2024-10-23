@@ -65,10 +65,18 @@ class HappyLog(object):
         global _HappyLogSingletonObj
         global _HappyLogSingletonDefaultObj
 
+        if len(log_ini) > 0 and not os.path.exists(log_ini):
+            logger = logging.getLogger()
+            logger.error("日志配置文件 %s 不存在" % log_ini)
+            exit(1)
+
         if _HappyLogSingletonObj:
+            if len(log_ini) > 0:
+                _HappyLogSingletonObj.load_config()
+
             return _HappyLogSingletonObj
 
-        if os.path.exists(log_ini):
+        if len(log_ini) > 0:
             _HappyLogSingletonObj = HappyLog(log_ini, logger_name)
             obj = _HappyLogSingletonObj
         else:
@@ -100,7 +108,7 @@ class HappyLog(object):
         self.logger.addHandler(handler)
 
         if self.default_handler_count == 1:
-            self.logger.debug('未启用日志配置文件，加载默认设置')
+            self.logger.info('未启用日志配置文件，加载默认设置')
 
     def load_stream_default_config(self, formatter: logging.Formatter = logging.Formatter(
                                        '%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')):
@@ -148,7 +156,7 @@ class HappyLog(object):
             if self.default_stream_handler:
                 self.logger.removeHandler(self.default_stream_handler)
 
-            self.logger.info('日志配置文件 \'%s\' 加载成功。' % self.log_ini)
+            self.logger.info('日志配置文件 \'%s\' 加载成功' % self.log_ini)
 
             if self.logger_name:
                 self.logger = logging.getLogger(self.logger_name)
