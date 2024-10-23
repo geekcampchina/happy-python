@@ -13,7 +13,7 @@ class EmailAddr:
     name: str
     addr: str
 
-    def to_tuple(self) -> tuple:
+    def to_tuple(self) -> tuple[str, str]:
         return self.name, self.addr
 
 
