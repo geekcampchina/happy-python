@@ -2,6 +2,7 @@ import logging
 import logging.config
 import os
 from enum import Enum, unique
+from typing import Union
 
 _HappyLogSingletonObj = None
 _HappyLogSingletonDefaultObj = None
@@ -95,7 +96,7 @@ class HappyLog(object):
         self.log_level = HappyLogLevel(log_level)
         self.logger.setLevel(self.log_level.name)
 
-    def build_default_config(self, handler: logging.StreamHandler | logging.FileHandler, _formatter: logging.Formatter):
+    def build_default_config(self, handler: Union[logging.StreamHandler, logging.FileHandler], _formatter: logging.Formatter):
         self.default_handler_count += 1
 
         self.logger = logging.getLogger()
