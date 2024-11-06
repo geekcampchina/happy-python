@@ -4,6 +4,8 @@ import os
 from enum import Enum, unique
 from typing import Union
 
+from varname import argname
+
 _HappyLogSingletonObj = None
 _HappyLogSingletonDefaultObj = None
 
@@ -170,26 +172,35 @@ class HappyLog(object):
     def var(self, var_name: str, var_value):
         self.logger.trace('var->%s=%s' % (var_name, var_value))
 
-    def critical(self, s: str):
-        self.logger.critical(s)
+    def critical(self, *args, sep=' '):
+        self.logger.critical(sep.join(args))
 
-    def error(self, s: str):
-        self.logger.error(s)
+    def error(self, *args, sep=' '):
+        self.logger.error(sep.join(args))
 
-    def warning(self, s: str):
-        self.logger.warning(s)
+    def warning(self, *args, sep=' '):
+        self.logger.warning(sep.join(args))
 
-    def info(self, s: str):
-        self.logger.info(s)
+    def info(self, *args, sep=' '):
+        self.logger.info(sep.join(args))
 
-    def debug(self, s: str):
-        self.logger.debug(s)
+    def debug(self, *args, sep=' '):
+        self.logger.debug(sep.join(args))
 
-    def trace(self, s: str):
-        self.logger.trace(s)
+    def trace(self, *args, sep=' '):
+        self.logger.trace(sep.join(args))
 
     def input(self, var_name: str, var_value):
         self.logger.trace('input->%s=%s' % (var_name, var_value))
 
     def output(self, var_name: str, var_value):
         self.logger.trace('output->%s=%s' % (var_name, var_value))
+
+    def vardump(self, var):
+        self.logger.trace('var->%s=%s' % (argname('var'), var))
+
+    def inputdump(self, var):
+        self.logger.trace('input->%s=%s' % (argname('var'), var))
+
+    def outputdump(self, var):
+        self.logger.trace('output->%s=%s' % (argname('var'), var))

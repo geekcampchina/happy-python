@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "happy-python"
-version = "0.4.4"
+version = "0.5.0"
 description = "Happy-Python是一个简单易用的Python库，让编程轻松愉快"
 authors = ["Chengdu Geek Camp <info@cdgeekcamp.com>"]
 license = "MIT"
@@ -25,6 +25,8 @@ include = ["happy_python.resource"]
 
 [tool.poetry.dependencies]
 python = "^3.8.5"
+varname = "^0.13.5"
+pure-eval = "^0.2.3"
 
 [build-system]
 requires = ["poetry-core", "poetry-dynamic-versioning"]
