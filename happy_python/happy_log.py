@@ -173,22 +173,28 @@ class HappyLog(object):
         self.logger.trace('var->%s=%s' % (var_name, var_value))
 
     def critical(self, *args, sep=' '):
-        self.logger.critical(sep.join(args))
+        _args = [str(arg) for arg in args]
+        self.logger.critical(sep.join(_args))
 
     def error(self, *args, sep=' '):
-        self.logger.error(sep.join(args))
+        _args = [str(arg) for arg in args]
+        self.logger.error(sep.join(_args))
 
     def warning(self, *args, sep=' '):
-        self.logger.warning(sep.join(args))
+        _args = [str(arg) for arg in args]
+        self.logger.warning(sep.join(_args))
 
     def info(self, *args, sep=' '):
-        self.logger.info(sep.join(args))
+        _args = [str(arg) for arg in args]
+        self.logger.info(sep.join(_args))
 
     def debug(self, *args, sep=' '):
-        self.logger.debug(sep.join(args))
+        _args = [str(arg) for arg in args]
+        self.logger.debug(sep.join(_args))
 
     def trace(self, *args, sep=' '):
-        self.logger.trace(sep.join(args))
+        _args = [str(arg) for arg in args]
+        self.logger.trace(sep.join(_args))
 
     def input(self, var_name: str, var_value):
         self.logger.trace('input->%s=%s' % (var_name, var_value))
