@@ -24,7 +24,7 @@ packages = [
 include = ["happy_python.resource"]
 
 [tool.poetry.dependencies]
-python = "^3.8.5"
+python = "^3.10.12"
 
 [build-system]
 requires = ["poetry-core", "poetry-dynamic-versioning"]
