@@ -1,10 +1,10 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import logging
 import logging.config
 import os
 from enum import Enum, unique
+from typing import Union
+
+from varname import argname
 
 _HappyLogSingletonObj = None
 _HappyLogSingletonDefaultObj = None
@@ -98,7 +98,7 @@ class HappyLog(object):
         self.log_level = HappyLogLevel(log_level)
         self.logger.setLevel(self.log_level.name)
 
-    def build_default_config(self, handler: logging.StreamHandler | logging.FileHandler, _formatter: logging.Formatter):
+    def build_default_config(self, handler: Union[logging.StreamHandler, logging.FileHandler], _formatter: logging.Formatter):
         self.default_handler_count += 1
 
         self.logger = logging.getLogger()
@@ -111,7 +111,7 @@ class HappyLog(object):
             self.logger.info('未启用日志配置文件，加载默认设置')
 
     def load_stream_default_config(self, formatter: logging.Formatter = logging.Formatter(
-                                       '%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')):
+        '%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')):
         """
         载入默认日志配置
         :return:
@@ -172,26 +172,41 @@ class HappyLog(object):
     def var(self, var_name: str, var_value):
         self.logger.trace('var->%s=%s' % (var_name, var_value))
 
-    def critical(self, s: str):
-        self.logger.critical(s)
+    def critical(self, *args, sep=' '):
+        _args = [str(arg) for arg in args]
+        self.logger.critical(sep.join(_args))
 
-    def error(self, s: str):
-        self.logger.error(s)
+    def error(self, *args, sep=' '):
+        _args = [str(arg) for arg in args]
+        self.logger.error(sep.join(_args))
 
-    def warning(self, s: str):
-        self.logger.warning(s)
+    def warning(self, *args, sep=' '):
+        _args = [str(arg) for arg in args]
+        self.logger.warning(sep.join(_args))
 
-    def info(self, s: str):
-        self.logger.info(s)
+    def info(self, *args, sep=' '):
+        _args = [str(arg) for arg in args]
+        self.logger.info(sep.join(_args))
 
-    def debug(self, s: str):
-        self.logger.debug(s)
+    def debug(self, *args, sep=' '):
+        _args = [str(arg) for arg in args]
+        self.logger.debug(sep.join(_args))
 
-    def trace(self, s: str):
-        self.logger.trace(s)
+    def trace(self, *args, sep=' '):
+        _args = [str(arg) for arg in args]
+        self.logger.trace(sep.join(_args))
 
     def input(self, var_name: str, var_value):
         self.logger.trace('input->%s=%s' % (var_name, var_value))
 
     def output(self, var_name: str, var_value):
         self.logger.trace('output->%s=%s' % (var_name, var_value))
+
+    def vardump(self, var):
+        self.logger.trace('var->%s=%s' % (argname('var'), var))
+
+    def inputdump(self, var):
+        self.logger.trace('input->%s=%s' % (argname('var'), var))
+
+    def outputdump(self, var):
+        self.logger.trace('output->%s=%s' % (argname('var'), var))

@@ -1,6 +1,3 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import unittest
 
 from happy_python import gen_md5_32_hexdigest, sign_sha1_digest, sign_sha224_digest, sign_sha256_digest, \

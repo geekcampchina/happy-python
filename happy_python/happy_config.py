@@ -1,6 +1,3 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 配置文件（INI）转换类
 """
@@ -9,13 +6,15 @@ import os
 from abc import ABCMeta
 from dataclasses import dataclass
 
+from typing import List
+
 from happy_python import HappyPyException
 
 
 @dataclass
 class HappyConfigXListNode:
     prefix: str
-    keys: list[str]
+    keys: List[str]
 
 
 @dataclass
@@ -26,7 +25,7 @@ class HappyConfigXList:
 
 class HappyConfigBase(object, metaclass=ABCMeta):
     _section = 'main'
-    _xlist: list[HappyConfigXList] = []
+    _xlist: List[HappyConfigXList] = []
 
     def __init__(self):
         pass
@@ -60,7 +59,7 @@ class HappyConfigBase(object, metaclass=ABCMeta):
                     if _key not in xlist.node.keys:
                         xlist.node.keys.append(_key)
 
-    def xlist_key(self, prefix: str, section: str = '') -> list[str]:
+    def xlist_key(self, prefix: str, section: str = '') -> List[str]:
         __section = self._section if section == '' else section
 
         for xlist in self._xlist:

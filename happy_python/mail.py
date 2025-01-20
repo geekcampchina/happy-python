@@ -1,11 +1,10 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from dataclasses import dataclass
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.utils import formatdate
 from os.path import basename
+
+from typing import Tuple
 
 
 @dataclass
@@ -13,7 +12,7 @@ class EmailAddr:
     name: str
     addr: str
 
-    def to_tuple(self) -> tuple:
+    def to_tuple(self) -> Tuple[str, str]:
         return self.name, self.addr
 
 

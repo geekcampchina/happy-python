@@ -1,6 +1,3 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 启用或禁用参数，以及相关管理函数
 """

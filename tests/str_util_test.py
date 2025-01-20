@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
 import unittest
 
 from happy_python import bytearray_to_str, gen_random_str, to_hex_str1, is_ascii_str, to_hex_str2, \

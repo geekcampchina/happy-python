@@ -1,14 +1,9 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-import unittest
 import re
-from datetime import datetime
+import unittest
 
-from happy_python import str_to_datetime, HappyDatetimeFormat
-from happy_python import datetime_to_str
 from happy_python import get_current_datetime
 from happy_python import get_current_timestamp
+from happy_python import str_to_datetime, HappyDatetimeFormat
 
 
 class TestUtils(unittest.TestCase):

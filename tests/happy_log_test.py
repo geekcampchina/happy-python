@@ -1,6 +1,3 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import inspect
 import logging
 import unittest
@@ -34,9 +31,9 @@ class TestHappyLog(unittest.TestCase):
 
     def assert_log(self, func, level: str):
         with self.assertLogs(self.logger, level='TRACE') as cm:
-            func('%s info' % level)
+            func('%s info' % level, 'message')
 
-        self.assertEqual(cm.output, [('%s:root:%s info' % (level.upper(), level))])
+        self.assertEqual(cm.output, [('%s:root:%s info message' % (level.upper(), level))])
 
     def test_var(self):
         def assert_var_log(func, var_name: str, var_value):
@@ -101,3 +98,27 @@ class TestHappyLog(unittest.TestCase):
             self.hlog.exit_func(func_name)
 
         self.assertEqual(cm.output, ['TRACE:root:Exit function: test_exit_func'])
+
+    def test_vardump(self):
+        foo = 1
+
+        with self.assertLogs(self.logger, level='TRACE') as cm:
+            self.hlog.vardump(foo)
+
+        self.assertEqual(cm.output, [('TRACE:root:var->%s=%s' % ('foo', foo))])
+
+    def test_inputdump(self):
+        foo = 1
+
+        with self.assertLogs(self.logger, level='TRACE') as cm:
+            self.hlog.inputdump(foo)
+
+        self.assertEqual(cm.output, [('TRACE:root:input->%s=%s' % ('foo', foo))])
+
+    def test_outputdump(self):
+        foo = 1
+
+        with self.assertLogs(self.logger, level='TRACE') as cm:
+            self.hlog.outputdump(foo)
+
+        self.assertEqual(cm.output, [('TRACE:root:output->%s=%s' % ('foo', foo))])

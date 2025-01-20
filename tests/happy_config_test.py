@@ -37,6 +37,7 @@ class TestHappyConfigParser(unittest.TestCase):
         config['foo_section']['!url.bar.status.message'] = 'OK'
 
         with open('example.ini', 'w') as configfile:
+            # noinspection PyTypeChecker
             config.write(configfile)
 
     def test_load(self):

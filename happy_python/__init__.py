@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
 from happy_python.happy_exception import HappyPyException
 # 基础代码必须最先导入
 from happy_python.happy_log import HappyLog
