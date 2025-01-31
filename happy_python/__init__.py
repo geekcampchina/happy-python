@@ -1,6 +1,6 @@
-from happy_python.happy_exception import HappyPyException
 # 基础代码必须最先导入
 from happy_python.happy_log import HappyLog
+from happy_python.happy_exception import HappyPyException
 from happy_python.mail import EmailAddr, HappyEmail
 from happy_python.parameter_manager import ParameterManager
 from happy_python.happy_config import HappyConfigBase
