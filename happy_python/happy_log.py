@@ -111,7 +111,7 @@ class HappyLog(object):
             self.logger.info('未启用日志配置文件，加载默认设置')
 
     def load_stream_default_config(self, formatter: logging.Formatter = logging.Formatter(
-        '%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')):
+        '%(asctime)s %(process)s [%(levelname)s] %(module)s: %(message)s', '%Y-%m-%d %H:%M:%S')):
         """
         载入默认日志配置
         :return:
@@ -127,7 +127,7 @@ class HappyLog(object):
     def load_file_default_config(self,
                                  filename: str,
                                  formatter: logging.Formatter = logging.Formatter(
-                                     '%(asctime)s %(process)s [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')):
+                                     '%(asctime)s %(process)s [%(levelname)s] %(module)s: %(message)s', '%Y-%m-%d %H:%M:%S')):
         """
         载入默认日志配置
         :return:
