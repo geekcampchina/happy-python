@@ -10,6 +10,7 @@ class HappyDatetimeFormat(Enum):
     Ymd = '%Y%m%d'
     HMS = '%H%M%S'
     Y_m_d_H_M_S = '%Y_%m_%d_%H_%M_%S'
+    YmdTHMSfZ = "%Y-%m-%dT%H:%M:%S.%fZ"
 
 
 def str_to_datetime(date_string: str, custom_format: HappyDatetimeFormat = HappyDatetimeFormat.Ymd_HMS) -> datetime:
