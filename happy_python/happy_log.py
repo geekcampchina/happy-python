@@ -2,166 +2,117 @@ import logging
 import logging.config
 import os
 from enum import Enum, unique
+from threading import Lock
 from typing import Union
 
 from varname import argname
 
 _HappyLogSingletonObj = None
 _HappyLogSingletonDefaultObj = None
+_singleton_lock = Lock()
+
+TRACE_LEVEL_NUM = 9
+logging.addLevelName(TRACE_LEVEL_NUM, 'TRACE')
 
 
 @unique
 class HappyLogLevel(Enum):
-    CRITICAL = 0
-    ERROR = 1
-    WARNING = 2
-    INFO = 3
-    DEBUG = 4
-    TRACE = 5
+    CRITICAL = logging.CRITICAL
+    ERROR = logging.ERROR
+    WARNING = logging.WARNING
+    INFO = logging.INFO
+    DEBUG = logging.DEBUG
+    TRACE = TRACE_LEVEL_NUM
 
     @staticmethod
     def get_list():
-        """
-        返回日志等级数字列表
-        :return:
-        """
-        return [*range(HappyLogLevel.CRITICAL.value, HappyLogLevel.CRITICAL.TRACE.value + 1)]
+        return [level.value for level in HappyLogLevel]
 
-
-TRACE_LEVEL_NUM = 9
-logging.addLevelName(TRACE_LEVEL_NUM, HappyLogLevel.TRACE.name)
-
-
-def trace_log_func(self, message, *args, **kws):
-    """
-    增加自定义日志等级
-    """
-    if self.isEnabledFor(TRACE_LEVEL_NUM):
-        # Yes, logger takes its '*args' as 'args'.
-        self._log(TRACE_LEVEL_NUM, message, args, **kws)
-
-
-class HappyLog(object):
-    log_ini = ''
-    logger_name = ''
-    logger = None
-    default_file_handler = None
-    default_stream_handler = None
-    default_handler_count = 0
-
+class HappyLog:
     def __init__(self, log_ini='', logger_name=''):
-        self.log_level: HappyLogLevel = HappyLogLevel.INFO
-        self.logger_name = logger_name
+        self.logger = None
+        self._validate_ini_path(log_ini)
         self.log_ini = log_ini
-
-        logging.Logger.trace = trace_log_func
+        self.logger_name = logger_name
+        self.log_level = HappyLogLevel.INFO
+        self._init_logging_system()
         self.load_config()
 
     @staticmethod
-    def get_instance(log_ini='', logger_name=''):
-        """
-        单例模式
-        """
-        global _HappyLogSingletonObj
-        global _HappyLogSingletonDefaultObj
+    def _validate_ini_path(path):
+        if path and not os.path.exists(path):
+            raise FileNotFoundError('日志配置文件不存在：%s' % path)
 
-        if len(log_ini) > 0 and not os.path.exists(log_ini):
-            logger = logging.getLogger()
-            logger.error("日志配置文件 %s 不存在" % log_ini)
-            exit(1)
+    @staticmethod
+    def _init_logging_system():
+        logging.Logger.trace = lambda self, msg, *args, **kwargs: \
+            self._log(TRACE_LEVEL_NUM, msg, args, **kwargs) if self.isEnabledFor(TRACE_LEVEL_NUM) else None
 
-        if _HappyLogSingletonObj:
-            if len(log_ini) > 0:
-                _HappyLogSingletonObj.load_config()
+    @classmethod
+    def get_instance(cls, log_ini='', logger_name='', is_new_instance=False):
+        global _HappyLogSingletonObj, _HappyLogSingletonDefaultObj
 
-            return _HappyLogSingletonObj
+        if is_new_instance:
+            _HappyLogSingletonObj = None
+            _HappyLogSingletonDefaultObj = None
 
-        if len(log_ini) > 0:
-            _HappyLogSingletonObj = HappyLog(log_ini, logger_name)
-            obj = _HappyLogSingletonObj
-        else:
+        with _singleton_lock:
+            if log_ini:
+                if not _HappyLogSingletonObj:
+                    _HappyLogSingletonObj = cls(log_ini, logger_name)
+
+                return _HappyLogSingletonObj
+
             if not _HappyLogSingletonDefaultObj:
-                _HappyLogSingletonDefaultObj = HappyLog(log_ini, logger_name)
+                _HappyLogSingletonDefaultObj = cls(log_ini, logger_name)
 
-            obj = _HappyLogSingletonDefaultObj
-
-        return obj
+            return _HappyLogSingletonDefaultObj
 
     def get_logger(self):
         return self.logger
 
-    def set_level(self, log_level: int = HappyLogLevel.INFO.value):
-        """
-        :param log_level: 有效范围0~5
-        :return:
-        """
-        self.log_level = HappyLogLevel(log_level)
-        self.logger.setLevel(self.log_level.name)
+    def set_level(self, log_level: Union[int, HappyLogLevel]):
+        if isinstance(log_level, int):
+            log_level = HappyLogLevel(log_level)
 
-    def build_default_config(self, handler: Union[logging.StreamHandler, logging.FileHandler], _formatter: logging.Formatter):
-        self.default_handler_count += 1
-
-        self.logger = logging.getLogger()
-
-        self.logger.setLevel(self.log_level.name)
-        handler.setFormatter(_formatter)
-        self.logger.addHandler(handler)
-
-        if self.default_handler_count == 1:
-            self.logger.info('未启用日志配置文件，加载默认设置')
-
-    def load_stream_default_config(self, formatter: logging.Formatter = logging.Formatter(
-        '%(asctime)s %(process)s [%(levelname)s] %(module)s: %(message)s', '%Y-%m-%d %H:%M:%S')):
-        """
-        载入默认日志配置
-        :return:
-        """
-        import sys
-
-        if self.logger and self.default_stream_handler:
-            self.logger.removeHandler(self.default_stream_handler)
-
-        self.default_stream_handler = logging.StreamHandler(sys.stdout)
-        self.build_default_config(handler=self.default_stream_handler, _formatter=formatter)
-
-    def load_file_default_config(self,
-                                 filename: str,
-                                 formatter: logging.Formatter = logging.Formatter(
-                                     '%(asctime)s %(process)s [%(levelname)s] %(module)s: %(message)s', '%Y-%m-%d %H:%M:%S')):
-        """
-        载入默认日志配置
-        :return:
-        """
-        from pathlib import Path
-
-        if filename:
-            Path(filename).parent.mkdir(parents=True, exist_ok=True)
-
-            if self.logger and self.default_file_handler:
-                self.logger.removeHandler(self.default_file_handler)
-
-            self.default_file_handler = logging.FileHandler(filename)
-            self.build_default_config(handler=self.default_file_handler, _formatter=formatter)
-        else:
-            self.logger.error('必须指定日志文件名')
+        self.log_level = log_level
+        self.logger.setLevel(log_level.value)
 
     def load_config(self):
-        if os.path.exists(self.log_ini):
-            logging.config.fileConfig(self.log_ini)
-            self.logger = logging.getLogger()
-
-            if self.default_file_handler:
-                self.logger.removeHandler(self.default_file_handler)
-
-            if self.default_stream_handler:
-                self.logger.removeHandler(self.default_stream_handler)
-
-            self.logger.info('日志配置文件 \'%s\' 加载成功' % self.log_ini)
-
-            if self.logger_name:
-                self.logger = logging.getLogger(self.logger_name)
+        if self.log_ini:
+            self._load_ini_config()
         else:
-            self.load_stream_default_config()
+            self._load_default_config()
+
+    def _load_ini_config(self):
+        self._clean_handlers()  # 加载前清理handler
+
+        logging.config.fileConfig(
+            self.log_ini,
+            disable_existing_loggers=False
+        )
+        self.logger = logging.getLogger(self.logger_name)
+        self._clean_handlers()
+        self.logger.info('日志配置文件 "%s" 加载成功' % self.log_ini)
+
+    def _load_default_config(self):
+        self._clean_handlers()  # 加载前清理handler
+
+        self.logger = logging.getLogger(self.logger_name)
+        self._clean_handlers()
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(process)s [%(levelname)s] %(module)s: %(message)s',
+            '%Y-%m-%d %H:%M:%S'
+        ))
+        self.logger.addHandler(handler)
+        self.logger.setLevel(self.log_level.value)
+
+    def _clean_handlers(self):
+        if self.logger:
+            for handler in self.logger.handlers[:]:
+                self.logger.removeHandler(handler)
+                handler.close()
 
     def enter_func(self, func_name: str):
         self.logger.trace("Enter function: %s" % func_name)
