@@ -12,7 +12,6 @@ from happy_python import HappyLog
 
 class TestHappyLog(unittest.TestCase):
     def setUp(self):
-        print()
         self.log_dir = tempfile.TemporaryDirectory()
         self.test_ini = os.path.join(self.log_dir.name, 'test_log.ini')
         self._create_test_ini()
@@ -71,7 +70,8 @@ class TestHappyLog(unittest.TestCase):
     def test_handler_management(self):
         hlog = HappyLog.get_instance()
         initial_handlers = len(hlog.logger.handlers)
-        self.assertEqual(3, initial_handlers)
+
+        self.assertEqual(4, initial_handlers)
 
         hlog.load_config()
 

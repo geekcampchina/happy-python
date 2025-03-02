@@ -15,6 +15,14 @@ TRACE_LEVEL_NUM = 9
 logging.addLevelName(TRACE_LEVEL_NUM, 'TRACE')
 
 
+class HappyLogLevelInt(Enum):
+    CRITICAL = 0
+    ERROR = 1
+    WARNING = 2
+    INFO = 3
+    DEBUG = 4
+    TRACE = 5
+
 @unique
 class HappyLogLevel(Enum):
     CRITICAL = logging.CRITICAL
@@ -27,6 +35,21 @@ class HappyLogLevel(Enum):
     @staticmethod
     def get_list():
         return [level.value for level in HappyLogLevel]
+
+def to_happy_log_level(level: int) -> HappyLogLevel:
+    mapping = {
+        HappyLogLevelInt.CRITICAL.value: HappyLogLevel.CRITICAL,
+        HappyLogLevelInt.ERROR.value: HappyLogLevel.ERROR,
+        HappyLogLevelInt.WARNING.value: HappyLogLevel.WARNING,
+        HappyLogLevelInt.INFO.value: HappyLogLevel.INFO,
+        HappyLogLevelInt.DEBUG.value: HappyLogLevel.DEBUG,
+        HappyLogLevelInt.TRACE.value: HappyLogLevel.TRACE,
+    }
+
+    if level in mapping:
+        return mapping[level]
+
+    raise ValueError('建议使用HappyLogLevel枚举设置日志等级')
 
 class HappyLog:
     def __init__(self, log_ini='', logger_name=''):
@@ -68,12 +91,15 @@ class HappyLog:
 
             return _HappyLogSingletonDefaultObj
 
-    def get_logger(self):
+    def get_logger(self, logger_name=''):
+        if logger_name:
+            return logging.getLogger(logger_name)
+
         return self.logger
 
     def set_level(self, log_level: Union[int, HappyLogLevel]):
         if isinstance(log_level, int):
-            log_level = HappyLogLevel(log_level)
+            log_level = to_happy_log_level(log_level)
 
         self.log_level = log_level
         self.logger.setLevel(log_level.value)
@@ -92,14 +118,14 @@ class HappyLog:
             disable_existing_loggers=False
         )
         self.logger = logging.getLogger(self.logger_name)
-        self._clean_handlers()
+
         self.logger.info('日志配置文件 "%s" 加载成功' % self.log_ini)
 
     def _load_default_config(self):
         self._clean_handlers()  # 加载前清理handler
 
         self.logger = logging.getLogger(self.logger_name)
-        self._clean_handlers()
+
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter(
             '%(asctime)s %(process)s [%(levelname)s] %(module)s: %(message)s',
