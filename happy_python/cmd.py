@@ -133,11 +133,11 @@ def execute_cmd(cmd: str, encoding='UTF-8', remove_white_char=False, is_raise_ex
     return cp.returncode, result
 
 
-def non_blocking_exe_cmd(cmd: str) -> None:
+def non_blocking_exe_cmd(cmd: str) -> Process:
     """
     使用非阻塞的子进程执行命令
     :cmd: 命令行
-    :return:
+    :return: 子进程对象，父进程可以通过join()等待其结束
     """
     func_name = inspect.stack()[0][3]
     hlog.enter_func(func_name)
@@ -146,8 +146,10 @@ def non_blocking_exe_cmd(cmd: str) -> None:
 
     child_process = Process(target=get_exit_status_of_cmd, args=(cmd,))
     child_process.start()
-    # 不等待子进程返回，不需要使用 child_process.join()
+
     hlog.exit_func(func_name)
+
+    return child_process
 
 
 def exe_cmd_and_poll_output(cmd, encoding='UTF-8', is_capture_output=False):
