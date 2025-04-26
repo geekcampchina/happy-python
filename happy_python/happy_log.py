@@ -268,10 +268,17 @@ def to_happy_log_level(level: int) -> HappyLogLevel:
 class SingletonMeta(type):
     _instances: weakref.WeakValueDictionary = weakref.WeakValueDictionary()
     _lock = Lock()
+    _log_ini = None
+    _logger_name = None
 
     def __call__(cls: Type[T], *args, **kwargs) -> T:
-        # 1) 看看用户有没有传 reset=True
-        reset_flag = kwargs.get('reset', False)
+        reset_flag = kwargs.pop('reset', False)
+        log_ini = kwargs.get('log_ini')
+        logger_name = kwargs.get('logger_name')
+
+        # 已经初始化过，但是配置文件发生变化
+        if not reset_flag and cls._instances.get(cls) and (cls._log_ini != log_ini or cls._logger_name != logger_name):
+            reset_flag = True
 
         with cls._lock:
             if reset_flag:
@@ -284,6 +291,8 @@ class SingletonMeta(type):
                 # 第一次创建或被 reset 后重新创建
                 inst = super().__call__(*args, **kwargs)
                 cls._instances[cls] = inst
+                cls._log_ini = log_ini
+                cls._logger_name = logger_name
 
         return inst
 
@@ -296,11 +305,19 @@ class HappyLog(metaclass=SingletonMeta):
     log_level: HappyLogLevel = HappyLogLevel.INFO
     logger: logging.Logger | None = field(default=None, init=False)
     _async_mgr: AsyncLogManager = field(default_factory=AsyncLogManager, init=False, repr=False)
+    _is_default_config: bool = False
 
     def __post_init__(self) -> None:
+        self._update_logger()
+
         self._validate_ini_path(self.log_ini)
         self._init_logging_system()
         self.load_config()
+
+    def _update_logger(self):
+        self.logger = logging.getLogger(self.logger_name)
+        # 禁用传播
+        self.logger.propagate = False
 
     @staticmethod
     def _validate_ini_path(path: str) -> None:
@@ -329,19 +346,10 @@ class HappyLog(metaclass=SingletonMeta):
         self.log_level = log_level
 
         if self.logger:
-            # 更新 Logger 的级别
             self.logger.setLevel(log_level.value)
 
-            # 同步更新所有 Handler 的级别
-            for handler in self.logger.handlers:
-                if isinstance(handler, FallbackQueueHandler):
-                    # 异步模式下需更新底层真实 Handler
-                    real_handlers = self._async_mgr.active_handlers.get(self.logger_name, [])
-
-                    for h in real_handlers:
-                        h.setLevel(log_level.value)
-                else:
-                    handler.setLevel(log_level.value)
+        if self._is_default_config:
+            self._load_default_config()
 
     def load_config(self) -> None:
         if self.log_ini:
@@ -350,20 +358,21 @@ class HappyLog(metaclass=SingletonMeta):
             self._load_default_config()
 
     def _load_ini_config(self) -> None:
-        self._clean_handlers()
+        self._is_default_config = False
+        self.clean_handlers()
         logging.config.fileConfig(self.log_ini, disable_existing_loggers=True)
 
-        # 确保 logger 引用最新
-        self.logger = logging.getLogger(self.logger_name)
-        # 禁用传播
-        self.logger.propagate = False
+        self._update_logger()
 
         self._setup_logging(self.logger.handlers.copy())
         self.logger.info('异步日志已启用，配置文件 "%s" 加载成功', self.log_ini)
 
     def _load_default_config(self) -> None:
-        self._clean_handlers()
-        self.logger = logging.getLogger(self.logger_name)
+        self._is_default_config = True
+        self.clean_handlers()
+
+        self._update_logger()
+
         console = self._async_mgr.get_or_create_handler('console', lambda: logging.StreamHandler())
         console.setFormatter(logging.Formatter(
             '%(asctime)s %(process)d [%(levelname)s] %(module)s: %(message)s',
@@ -374,7 +383,7 @@ class HappyLog(metaclass=SingletonMeta):
 
     def _setup_logging(self, handlers: list[logging.Handler]) -> None:
         # 彻底清理当前 logger 的所有处理器
-        self._clean_handlers()
+        self.clean_handlers()
 
         # 清理 logging 全局管理器中的残留处理器
         for logger_name in logging.Logger.manager.loggerDict:
@@ -388,6 +397,11 @@ class HappyLog(metaclass=SingletonMeta):
         self._async_mgr.register_handlers(self.logger_name, handlers)
 
         if self._async_mgr.async_enabled:
+            root_logger = logging.getLogger('root')
+
+            if root_logger:
+                self.clean_handlers('root', root_logger)
+
             self._async_mgr.start_listener(handlers)
             queue_handler = FallbackQueueHandler(self._async_mgr.log_queue)
             self.logger.addHandler(queue_handler)
@@ -395,13 +409,16 @@ class HappyLog(metaclass=SingletonMeta):
             for h in handlers:
                 self.logger.addHandler(h)
 
-    def _clean_handlers(self) -> None:
-        if not self.logger:
+    def clean_handlers(self, _logger_name: str = None, _logger = None) -> None:
+        logger_name = self.logger_name if _logger_name is None else _logger_name
+        logger = self.logger if _logger is None else _logger
+
+        if not logger or not logger_name:
             return
 
             # 修复：遍历副本避免修改冲突
-        for h in list(self.logger.handlers):
-            self.logger.removeHandler(h)
+        for h in list(logger.handlers):
+            logger.removeHandler(h)
 
             # noinspection PyBroadException
             try:
@@ -410,11 +427,7 @@ class HappyLog(metaclass=SingletonMeta):
                 pass
 
         # 清理 AsyncLogManager 中的残留
-        self._async_mgr.unregister_handlers(self.logger_name)
-
-    def cleanup(self) -> None:
-        self._async_mgr.unregister_handlers(self.logger_name)
-        self._clean_handlers()
+        self._async_mgr.unregister_handlers(logger_name)
 
     # 日志接口
     def enter_func(self, func_name: str) -> None:
@@ -463,4 +476,4 @@ class HappyLog(metaclass=SingletonMeta):
 # 程序退出时自动清理
 import atexit
 
-atexit.register(HappyLog().cleanup)
+atexit.register(HappyLog().clean_handlers)
