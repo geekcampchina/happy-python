@@ -1,3 +1,56 @@
+# noinspection ALL
+"""
+模块概述
+    本模块提供了 HappyLog 类和相关组件，用于简化 Python logging
+    的异步日志管理。支持自定义配置文件、动态切换同步/异步模式、
+    以及 TRACE 级别的细粒度跟踪。
+
+主要组件
+    - AsyncLogManager: 异步日志后台管理（线程安全单例）
+    - SafeQueueListener: 带异常保护的 QueueListener
+    - FallbackQueueHandler: 队列满时回落到同步处理
+    - HappyLogLevel: 自定义日志级别枚举（包含 TRACE）
+    - HappyLog: 日志入口，单例模式
+
+快速开始
+    >>> from happy_python import HappyLog, HappyLogLevel
+
+    # 1) 获取或创建日志单例（不重置）
+    >>> hlog = HappyLog(reset=False, log_ini='config/log.ini', logger_name='app')
+
+    # 2) 切换同步/异步输出模式
+    >>> HappyLog.set_async_mode(True)   # 启用异步模式
+    >>> HappyLog.set_async_mode(False)  # 切换回同步模式
+
+    # 3) 设置日志级别
+    >>> hlog.set_level(HappyLogLevel.DEBUG)
+
+    # 4) 记录日志
+    >>> hlog.info('Application started.')
+    >>> hlog.debug('Debugging details...')
+    >>> hlog.trace('Entering critical section.')
+
+    # 5) 细粒度跟踪
+    >>> hlog.enter_func('process_data')
+    >>> hlog.var('item_count', len(['a']))
+    >>> hlog.exit_func('process_data')
+
+构造函数参数
+    reset: bool
+        是否重置单例。传 True 时会丢弃旧实例并重新创建。
+        默认为 False。
+    log_ini: str
+        日志配置文件路径（INI 格式）。为空串时使用内置默认配置。
+    logger_name: str
+        获取的 logger 名称，对应 logging.getLogger(name)。默认为 'root'。
+
+注意事项
+    - 在程序退出时会自动调用 atexit 注册的 cleanup() 关闭所有 handler。
+    - 多线程环境下推荐使用异步模式（set_async_mode(True)）。
+    - 自定义 TRACE 级别数值为 9，可通过 hlog.trace() 输出。
+
+更多信息请参考模块内各类的 docstring 以及示例代码。
+"""
 import logging
 import logging.config
 import logging.handlers
@@ -272,7 +325,9 @@ class HappyLog(metaclass=SingletonMeta):
     def set_level(self, log_level: int | HappyLogLevel) -> None:
         if isinstance(log_level, int):
             log_level = to_happy_log_level(log_level)
+
         self.log_level = log_level
+
         if self.logger:
             self.logger.setLevel(log_level.value)
 
