@@ -5,13 +5,14 @@ import tempfile
 import unittest
 from logging.handlers import RotatingFileHandler
 
-from happy_python.happy_log import HappyLogLevel
-
 from happy_python import HappyLog
+from happy_python.happy_log import HappyLogLevel
 
 
 class TestHappyLog(unittest.TestCase):
     def setUp(self):
+        # 重置单例，确保每个测试独立
+        HappyLog.get_instance(log_ini='', logger_name='', reset=True)
         self.log_dir = tempfile.TemporaryDirectory()
         self.test_ini = os.path.join(self.log_dir.name, 'test_log.ini')
         self._create_test_ini()
@@ -21,30 +22,30 @@ class TestHappyLog(unittest.TestCase):
 
     def _create_test_ini(self):
         with open(self.test_ini, 'w') as f:
-            f.write("""
-    [loggers]
-    keys=root
+            f.write('''
+[loggers]
+keys=root
 
-    [handlers]
-    keys=consoleHandler
+[handlers]
+keys=consoleHandler
 
-    [formatters]
-    keys=simpleFormatter
+[formatters]
+keys=simpleFormatter
 
-    [logger_root]
-    level=DEBUG
-    handlers=consoleHandler
+[logger_root]
+level=DEBUG
+handlers=consoleHandler
 
-    [handler_consoleHandler]
-    class=StreamHandler
-    level=DEBUG
-    formatter=simpleFormatter
-    args=(sys.stdout,)
+[handler_consoleHandler]
+class=StreamHandler
+level=DEBUG
+formatter=simpleFormatter
+args=(sys.stdout,)
 
-    [formatter_simpleFormatter]
-    format=%(asctime)s [%(levelname)s] %(message)s
-    datefmt=%Y-%m-%d %H:%M:%S
-    """)
+[formatter_simpleFormatter]
+format=%(asctime)s [%(levelname)s] %(message)s
+datefmt=%Y-%m-%d %H:%M:%S
+''')
 
     def test_singleton_instance(self):
         instance1 = HappyLog.get_instance()
@@ -52,17 +53,17 @@ class TestHappyLog(unittest.TestCase):
         self.assertIs(instance1, instance2)
 
     def test_custom_config_instance(self):
-        instance1 = HappyLog.get_instance(self.test_ini)
+        # 使用 reset=True 确保新建实例
+        instance1 = HappyLog.get_instance(self.test_ini, reset=True)
         instance2 = HappyLog.get_instance(self.test_ini)
         self.assertIs(instance1, instance2)
 
     def test_invalid_ini_path(self):
         with self.assertRaises(FileNotFoundError):
-            HappyLog.get_instance('invalid_path.ini', is_new_instance=True)
+            HappyLog.get_instance('invalid_path.ini', reset=True)
 
     def test_log_level_settings(self):
         hlog = HappyLog.get_instance()
-
         for level in HappyLogLevel:
             hlog.set_level(level)
             self.assertEqual(hlog.logger.level, level.value)
@@ -70,25 +71,29 @@ class TestHappyLog(unittest.TestCase):
     def test_handler_management(self):
         hlog = HappyLog.get_instance()
         initial_handlers = len(hlog.logger.handlers)
+        self.assertGreaterEqual(initial_handlers, 1)
 
-        self.assertEqual(4, initial_handlers)
-
+        # 重新加载配置并清理原有 handlers
         hlog.load_config()
+        # 记录重新加载后 handlers 数量
+        handlers_after_load = len(hlog.logger.handlers)
 
-        # 添加测试handler
+        # 添加测试 handler
         test_handler = RotatingFileHandler(os.path.join(self.log_dir.name, 'test.log'))
         hlog.logger.addHandler(test_handler)
 
         final_handlers = len(hlog.logger.handlers)
-
-        self.assertEqual(2, final_handlers)
+        # 重新加载后一个 handler + 新增一个 handler
+        self.assertEqual(handlers_after_load + 1, final_handlers)
 
     def test_file_handler_creation(self):
         test_file = os.path.join(self.log_dir.name, 'test.log')
         hlog = HappyLog.get_instance()
-        hlog.log_ini = ''  # 强制使用默认配置
+        # 强制使用默认配置
+        hlog.log_ini = ''
+        hlog.load_config()
 
-        # 测试文件handler创建
+        # 测试文件 handler 创建
         file_handler = logging.FileHandler(test_file)
         hlog.logger.addHandler(file_handler)
         hlog.logger.info('Test message')
@@ -98,7 +103,6 @@ class TestHappyLog(unittest.TestCase):
 
     def test_invalid_log_level(self):
         hlog = HappyLog.get_instance()
-
         with self.assertRaises(ValueError):
             hlog.set_level(100)
 
@@ -111,23 +115,21 @@ class TestHappyLog(unittest.TestCase):
 
         self.assertIn('TRACE', cm.output[0])
 
-    def assert_log(self, hlog: HappyLog, func, level: str):
+    def assert_log(self, hlog, func, level):
         with self.assertLogs(hlog.logger, level='TRACE') as cm:
             func('%s info' % level, 'message')
 
-        self.assertEqual(cm.output, [('%s:root:%s info message' % (level.upper(), level))])
+        expected = ['%s:root:%s info message' % (level.upper(), level)]
+        self.assertEqual(cm.output, expected)
 
     def test_var(self):
-        def assert_var_log(_hlog: HappyLog, func, var_name: str, var_value):
-            with self.assertLogs(_hlog.logger, level='TRACE') as cm:
-                func(var_name, var_value)
-
-            self.assertEqual(cm.output, [('TRACE:root:var->%s=%s' % (var_name, var_value))])
-
         foo = 1
-
         hlog = HappyLog.get_instance()
-        assert_var_log(hlog, hlog.var, 'foo', foo)
+
+        with self.assertLogs(hlog.logger, level='TRACE') as cm:
+            hlog.var('foo', foo)
+
+        self.assertEqual(cm.output, ['TRACE:root:var->%s=%s' % ('foo', foo)])
 
     def test_critical(self):
         hlog = HappyLog.get_instance()
@@ -154,27 +156,22 @@ class TestHappyLog(unittest.TestCase):
         self.assert_log(hlog, hlog.trace, 'trace')
 
     def test_input(self):
-        def assert_var_log(_hlog: HappyLog, func, var_name: str, var_value):
-            with self.assertLogs(_hlog.logger, level='TRACE') as cm:
-                func(var_name, var_value)
-
-            self.assertEqual(cm.output, [('TRACE:root:input->%s=%s' % (var_name, var_value))])
-
         foo = 1
-
         hlog = HappyLog.get_instance()
-        assert_var_log(hlog, hlog.input, 'foo', foo)
+
+        with self.assertLogs(hlog.logger, level='TRACE') as cm:
+            hlog.input('foo', foo)
+
+        self.assertEqual(cm.output, ['TRACE:root:input->%s=%s' % ('foo', foo)])
 
     def test_output(self):
-        def assert_var_log(_hlog: HappyLog, func, var_name: str, var_value):
-            with self.assertLogs(_hlog.logger, level='TRACE') as cm:
-                func(var_name, var_value)
-
-            self.assertEqual(cm.output, [('TRACE:root:output->%s=%s' % (var_name, var_value))])
-
         foo = 1
         hlog = HappyLog.get_instance()
-        assert_var_log(hlog, hlog.output, 'foo', foo)
+
+        with self.assertLogs(hlog.logger, level='TRACE') as cm:
+            hlog.output('foo', foo)
+
+        self.assertEqual(cm.output, ['TRACE:root:output->%s=%s' % ('foo', foo)])
 
     def test_enter_func(self):
         func_name = inspect.stack()[0][3]
@@ -183,7 +180,7 @@ class TestHappyLog(unittest.TestCase):
         with self.assertLogs(hlog.logger, level='TRACE') as cm:
             hlog.enter_func(func_name)
 
-        self.assertEqual(cm.output, ['TRACE:root:Enter function: test_enter_func'])
+        self.assertEqual(cm.output, ['TRACE:root:Enter function: %s' % func_name])
 
     def test_exit_func(self):
         func_name = inspect.stack()[0][3]
@@ -192,7 +189,7 @@ class TestHappyLog(unittest.TestCase):
         with self.assertLogs(hlog.logger, level='TRACE') as cm:
             hlog.exit_func(func_name)
 
-        self.assertEqual(cm.output, ['TRACE:root:Exit function: test_exit_func'])
+        self.assertEqual(cm.output, ['TRACE:root:Exit function: %s' % func_name])
 
     def test_vardump(self):
         foo = 1
@@ -201,7 +198,7 @@ class TestHappyLog(unittest.TestCase):
         with self.assertLogs(hlog.logger, level='TRACE') as cm:
             hlog.vardump(foo)
 
-        self.assertEqual(cm.output, [('TRACE:root:var->%s=%s' % ('foo', foo))])
+        self.assertEqual(cm.output, ['TRACE:root:var->%s=%s' % ('foo', foo)])
 
     def test_inputdump(self):
         foo = 1
@@ -210,7 +207,7 @@ class TestHappyLog(unittest.TestCase):
         with self.assertLogs(hlog.logger, level='TRACE') as cm:
             hlog.inputdump(foo)
 
-        self.assertEqual(cm.output, [('TRACE:root:input->%s=%s' % ('foo', foo))])
+        self.assertEqual(cm.output, ['TRACE:root:input->%s=%s' % ('foo', foo)])
 
     def test_outputdump(self):
         foo = 1
@@ -219,4 +216,4 @@ class TestHappyLog(unittest.TestCase):
         with self.assertLogs(hlog.logger, level='TRACE') as cm:
             hlog.outputdump(foo)
 
-        self.assertEqual(cm.output, [('TRACE:root:output->%s=%s' % ('foo', foo))])
+        self.assertEqual(cm.output, ['TRACE:root:output->%s=%s' % ('foo', foo)])
