@@ -5,7 +5,7 @@ from multiprocessing import Process
 
 from happy_python import HappyLog
 
-hlog = HappyLog.get_instance()
+hlog = HappyLog()
 
 
 def get_exit_code_of_cmd(cmd: str,

@@ -19,7 +19,7 @@ TLD_MIN_SIZE = 3
 # 域名分隔符
 DOMAIN_SEPARATOR = '.'
 
-hlog = HappyLog.get_instance()
+hlog = HappyLog()
 
 # 顶级域列表
 TLDs = []
@@ -42,9 +42,9 @@ def _load_tlds_db() -> None:
             for line in f.readlines():
                 TLDs.append(line.strip())
     except FileNotFoundError:
-        hlog.err('TLDs数据文件不存在：%s' % tlds_resource_file)
+        hlog.error('TLDs数据文件不存在：%s' % tlds_resource_file)
     except FileExistsError:
-        hlog.err('无法打开TLDs数据文件：%s' % tlds_resource_file)
+        hlog.error('无法打开TLDs数据文件：%s' % tlds_resource_file)
 
 
 # 载入顶级域列表

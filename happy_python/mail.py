@@ -48,7 +48,7 @@ class HappyEmail:
         from email.header import Header
         from email.utils import formataddr
 
-        hlog = HappyLog.get_instance()
+        hlog = HappyLog()
         client = None
 
         # noinspection PyBroadException

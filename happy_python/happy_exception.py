@@ -4,7 +4,7 @@ from happy_python import HappyLog
 
 
 class HappyPyException(Exception):
-    hlog = HappyLog.get_instance()
+    hlog = HappyLog()
 
     @staticmethod
     def get_stack(e: Exception):

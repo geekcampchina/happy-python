@@ -2,7 +2,7 @@ import time
 
 from happy_python import HappyLog
 
-hlog = HappyLog.get_instance()
+hlog = HappyLog()
 
 
 def callback_succeed_once(callback, max_time=100, is_sleep=True, interval=0.1, **kwargs):
