@@ -1,7 +1,7 @@
 import inspect
 import os
 import subprocess
-from multiprocessing import Process
+from multiprocessing import Process, get_context
 
 from happy_python import HappyLog
 
