@@ -329,7 +329,12 @@ class HappyLog(metaclass=SingletonMeta):
         self.log_level = log_level
 
         if self.logger:
+            # 更新 Logger 的级别
             self.logger.setLevel(log_level.value)
+
+            # 同步更新所有 Handler 的级别
+            for handler in self.logger.handlers:
+                handler.setLevel(log_level.value)
 
     def load_config(self) -> None:
         if self.log_ini:
