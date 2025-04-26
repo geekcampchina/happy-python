@@ -334,7 +334,14 @@ class HappyLog(metaclass=SingletonMeta):
 
             # 同步更新所有 Handler 的级别
             for handler in self.logger.handlers:
-                handler.setLevel(log_level.value)
+                if isinstance(handler, FallbackQueueHandler):
+                    # 异步模式下需更新底层真实 Handler
+                    real_handlers = self._async_mgr.active_handlers.get(self.logger_name, [])
+
+                    for h in real_handlers:
+                        h.setLevel(log_level.value)
+                else:
+                    handler.setLevel(log_level.value)
 
     def load_config(self) -> None:
         if self.log_ini:
