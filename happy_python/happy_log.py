@@ -339,8 +339,13 @@ class HappyLog(metaclass=SingletonMeta):
 
     def _load_ini_config(self) -> None:
         self._clean_handlers()
-        logging.config.fileConfig(self.log_ini, disable_existing_loggers=False)
+        logging.config.fileConfig(self.log_ini, disable_existing_loggers=True)
+
+        # 确保 logger 引用最新
         self.logger = logging.getLogger(self.logger_name)
+        # 禁用传播
+        self.logger.propagate = False
+
         self._setup_logging(self.logger.handlers.copy())
         self.logger.info('异步日志已启用，配置文件 "%s" 加载成功', self.log_ini)
 
@@ -356,29 +361,44 @@ class HappyLog(metaclass=SingletonMeta):
         self.logger.setLevel(self.log_level.value)
 
     def _setup_logging(self, handlers: list[logging.Handler]) -> None:
+        # 彻底清理当前 logger 的所有处理器
+        self._clean_handlers()
+
+        # 清理 logging 全局管理器中的残留处理器
+        for logger_name in logging.Logger.manager.loggerDict:
+            if logger_name == self.logger_name:
+                logger = logging.getLogger(logger_name)
+
+                for h in logger.handlers[:]:
+                    logger.removeHandler(h)
+                    h.close()
+
         self._async_mgr.register_handlers(self.logger_name, handlers)
 
         if self._async_mgr.async_enabled:
             self._async_mgr.start_listener(handlers)
             queue_handler = FallbackQueueHandler(self._async_mgr.log_queue)
-            self._clean_handlers()
             self.logger.addHandler(queue_handler)
         else:
-            self._clean_handlers()
-
             for h in handlers:
                 self.logger.addHandler(h)
 
     def _clean_handlers(self) -> None:
-        if self.logger:
-            for h in list(self.logger.handlers):
-                self.logger.removeHandler(h)
+        if not self.logger:
+            return
 
-                # noinspection PyBroadException
-                try:
-                    h.close()
-                except Exception:
-                    pass
+            # 修复：遍历副本避免修改冲突
+        for h in list(self.logger.handlers):
+            self.logger.removeHandler(h)
+
+            # noinspection PyBroadException
+            try:
+                h.close()
+            except Exception:
+                pass
+
+        # 清理 AsyncLogManager 中的残留
+        self._async_mgr.unregister_handlers(self.logger_name)
 
     def cleanup(self) -> None:
         self._async_mgr.unregister_handlers(self.logger_name)
