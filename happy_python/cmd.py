@@ -144,7 +144,9 @@ def non_blocking_exe_cmd(cmd: str) -> Process:
 
     hlog.trace("cmd=%s" % cmd)
 
-    child_process = Process(target=get_exit_status_of_cmd, args=(cmd,))
+    # 用 spawn 上下文来启动子进程
+    ctx = get_context("spawn")
+    child_process = ctx.Process(target=get_exit_status_of_cmd, args=(cmd,))
     child_process.start()
 
     hlog.exit_func(func_name)
